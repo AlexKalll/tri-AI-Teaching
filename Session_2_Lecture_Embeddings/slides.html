@@ -1,0 +1,1355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRI AI Saturdays | Lecture Session 2: Embeddings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f0f2f5;
+    color: #1f2937;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .slideshow-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  .slide {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    background: #fff;
+    padding: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    overflow-y: auto;
+  }
+  .slide.active {
+    display: flex;
+    opacity: 1;
+    z-index: 2;
+  }
+
+  .slide-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 48px;
+    background: linear-gradient(135deg, #1a56db 0%, #1e40af 100%);
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .slide-header .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.3px;
+  }
+  .slide-header .brand svg { flex-shrink: 0; }
+  .slide-header .brand span { color: #fbbf24; }
+  .slide-header .meta {
+    font-size: 12px;
+    opacity: 0.9;
+    text-align: right;
+    line-height: 1.4;
+  }
+  .slide-header .meta strong { color: #fbbf24; }
+
+  .slide-body {
+    flex: 1;
+    padding: 32px 64px 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+  }
+
+  .slide-body h1 {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1.15;
+    color: #111827;
+    margin-bottom: 16px;
+    letter-spacing: -0.025em;
+  }
+  .slide-body h1 .highlight { color: #1a56db; }
+  .slide-body h1 .highlight-orange { color: #ea580c; }
+
+  .slide-body h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .slide-body h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #1a56db;
+    margin-bottom: 10px;
+  }
+
+  .slide-body p {
+    font-size: 1.1rem;
+    line-height: 1.65;
+    color: #374151;
+    margin-bottom: 12px;
+  }
+
+  .slide-body .subtitle {
+    font-size: 1.2rem;
+    font-weight: 400;
+    color: #6b7280;
+    margin-bottom: 8px;
+  }
+
+  .title-slide {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+  }
+  .title-slide .slide-body { align-items: center; text-align: center; }
+  .title-slide h1 { font-size: 3.5rem; margin-bottom: 20px; }
+  .title-slide .subtitle { font-size: 1.4rem; color: #6b7280; margin-bottom: 8px; }
+  .title-slide .partner { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 24px; color: #6b7280; font-weight: 500; }
+  .title-slide .partner svg { opacity: 0.7; }
+  .title-slide .session-info { margin-top: 20px; font-size: 0.95rem; color: #9ca3af; }
+
+  .agenda-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin: 20px 0;
+  }
+  .agenda-item {
+    background: #f3f4f6;
+    border-radius: 10px;
+    padding: 14px 10px;
+    text-align: center;
+    border-top: 3px solid #1a56db;
+    transition: transform 0.2s;
+  }
+  .agenda-item:hover { transform: translateY(-2px); }
+  .agenda-item .time { font-size: 0.8rem; font-weight: 600; color: #1a56db; margin-bottom: 4px; }
+  .agenda-item .label { font-size: 0.85rem; font-weight: 500; color: #374151; }
+  .agenda-item .duration { font-size: 0.75rem; color: #9ca3af; margin-top: 4px; }
+
+  .question-list, .key-list {
+    list-style: none;
+    padding: 0;
+    margin: 16px 0;
+  }
+  .question-list li, .key-list li {
+    padding: 8px 0 8px 32px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%231a56db' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3'/%3E%3Cpath d='M12 17h.01'/%3E%3C/svg%3E") left center no-repeat;
+    background-size: 18px;
+    font-size: 1.05rem;
+    color: #374151;
+    line-height: 1.5;
+  }
+
+  .key-list li {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%23ea580c' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") left center no-repeat;
+    background-size: 18px;
+  }
+
+  .highlight-box {
+    background: #eff6ff;
+    border-left: 4px solid #1a56db;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #1e3a5f;
+  }
+  .highlight-box.orange { background: #fff7ed; border-left-color: #ea580c; color: #7c2d12; }
+
+  .code-block {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #1f2937;
+    margin: 12px 0;
+    overflow-x: auto;
+    white-space: pre;
+  }
+
+  .table-wrap { margin: 16px 0; overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  thead { background: #1a56db; color: #fff; }
+  th { padding: 12px 16px; text-align: left; font-weight: 600; font-size: 0.9rem; }
+  td { padding: 10px 16px; border-bottom: 1px solid #e5e7eb; color: #374151; }
+  tbody tr:nth-child(even) { background: #f9fafb; }
+  tbody tr:hover { background: #eff6ff; }
+
+  .diagram-box {
+    background: #f8fafc;
+    border: 2px dashed #d1d5db;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    color: #374151;
+  }
+  .diagram-box .arrow { color: #1a56db; font-weight: 700; }
+  .diagram-box .label-colored { color: #ea580c; font-weight: 600; }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 12px 0;
+  }
+  .two-col .col { padding: 0; }
+  @media (max-width: 900px) { .two-col { grid-template-columns: 1fr; } }
+
+  .scenario-card {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 12px 0;
+  }
+  .scenario-card h4 { color: #166534; margin-bottom: 8px; font-size: 1.05rem; }
+  .scenario-card p { color: #374151; font-size: 1rem; margin-bottom: 6px; }
+
+  .poll-list {
+    list-style: none;
+    padding: 0;
+    margin: 12px 0;
+  }
+  .poll-list li {
+    padding: 10px 0 10px 36px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 24 24' fill='none' stroke='%23ea580c' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='9' y1='9' x2='15' y2='9'/%3E%3Cline x1='9' y1='13' x2='15' y2='13'/%3E%3C/svg%3E") left center no-repeat;
+    background-size: 22px;
+    font-size: 1rem;
+    color: #374151;
+    line-height: 1.5;
+  }
+
+  .poll-list .rating { color: #1a56db; font-weight: 500; }
+
+  .reading-section { margin: 12px 0; }
+  .reading-section h4 { color: #1a56db; margin: 14px 0 6px; font-size: 1.05rem; }
+  .reading-section ul { list-style: none; padding: 0; }
+  .reading-section ul li {
+    padding: 5px 0 5px 24px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'/%3E%3Cpath d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'/%3E%3C/svg%3E") left center no-repeat;
+    background-size: 16px;
+    font-size: 0.95rem;
+    color: #4b5563;
+    line-height: 1.5;
+  }
+
+  .nav-controls {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 40px;
+    padding: 8px 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    z-index: 100;
+  }
+  .nav-controls button {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: #6b7280;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .nav-controls button:hover { background: #f3f4f6; color: #1a56db; }
+  .nav-controls .slide-indicator {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #374151;
+    min-width: 60px;
+    text-align: center;
+  }
+  .nav-controls .total-slides { color: #9ca3af; }
+
+  .fullscreen-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    font-size: 1rem;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  .fullscreen-btn:hover { background: #f3f4f6; color: #1a56db; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+
+  @media (max-width: 768px) {
+    .slide-body { padding: 20px 20px 60px; }
+    .slide-body h1 { font-size: 2rem; }
+    .slide-body h2 { font-size: 1.5rem; }
+    .slide-header { padding: 10px 20px; flex-direction: column; gap: 4px; text-align: center; }
+    .slide-header .meta { text-align: center; }
+    .title-slide h1 { font-size: 2.2rem; }
+    .agenda-grid { grid-template-columns: 1fr 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .nav-controls { padding: 6px 14px; gap: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="slideshow-container" id="slideshow">
+
+  <!-- SLIDE 1: TITLE -->
+  <section class="slide active" data-slide="1">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">
+        Cohort 10 &bull; <strong>Lecture Session 2</strong><br>
+        July 11, 2026 &bull; 11 AM - 1 PM WAT
+      </div>
+    </div>
+    <div class="slide-body title-slide">
+      <h1>Embeddings: <span class="highlight">How AI</span><br><span class="highlight-orange">Understands Meaning</span></h1>
+      <p class="subtitle">Lecture Session | July 11, 2026 | 11 AM - 1 PM WAT</p>
+      <div class="partner">
+        <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#1a56db"/>
+          <path d="M20 8l12 7v14l-12 7-12-7V15l12-7z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <text x="20" y="25" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">AI</text>
+        </svg>
+        <span>TRI AI Saturdays &times; Google DeepMind</span>
+        <svg width="32" height="32" viewBox="0 0 40 40" fill="none">
+          <rect width="40" height="40" rx="8" fill="#ea580c"/>
+          <path d="M12 10h16M12 20h16M12 30h16" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <p class="session-info">In partnership with Google DeepMind</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 2: AGENDA -->
+  <section class="slide" data-slide="2">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Session Agenda</h2>
+      <div class="agenda-grid">
+        <div class="agenda-item">
+          <div class="time">0-5 min</div>
+          <div class="label">Hook &amp; Context</div>
+          <div class="duration">5 min</div>
+        </div>
+        <div class="agenda-item">
+          <div class="time">5-35 min</div>
+          <div class="label">Static Embeddings</div>
+          <div class="duration">30 min</div>
+        </div>
+        <div class="agenda-item">
+          <div class="time">35-75 min</div>
+          <div class="label">Contextual Embeddings</div>
+          <div class="duration">40 min</div>
+        </div>
+        <div class="agenda-item">
+          <div class="time">75-95 min</div>
+          <div class="label">Interactive Q&amp;A</div>
+          <div class="duration">20 min</div>
+        </div>
+        <div class="agenda-item">
+          <div class="time">95-120 min</div>
+          <div class="label">Wrap-up &amp; Next Steps</div>
+          <div class="duration">25 min</div>
+        </div>
+      </div>
+      <h3 style="margin-top:16px;">Key Questions We'll Answer</h3>
+      <ul class="question-list">
+        <li>How do computers represent word meaning?</li>
+        <li>What's the difference between &ldquo;bank&rdquo; (river) and &ldquo;bank&rdquo; (money)?</li>
+        <li>How do models like Gemma understand context?</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SLIDE 3: THE HOOK -->
+  <section class="slide" data-slide="3">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>The Hook</h2>
+      <div class="highlight-box" style="font-size:1.15rem; padding:20px 24px;">
+        &ldquo;How does your phone know what word you want to type next?&rdquo;
+      </div>
+      <div class="highlight-box orange" style="font-size:1.15rem; padding:20px 24px;">
+        &ldquo;How does Google Translate understand &lsquo;bank&rsquo; in &lsquo;I went fishing at the bank&rsquo; vs &lsquo;I deposited money at the bank&rsquo;?&rdquo;
+      </div>
+      <p style="margin-top:16px;">
+        <strong>The core challenge:</strong> Computers see numbers, not meaning. A computer has no innate understanding that &ldquo;dog&rdquo; is closer to &ldquo;cat&rdquo; than to &ldquo;quantum physics.&rdquo;
+      </p>
+      <p>
+        <strong>We need to convert words into numbers that capture meaning</strong> &mdash; and that is exactly what embeddings do.
+      </p>
+    </div>
+  </section>
+
+  <!-- SLIDE 4: THE PROBLEM WITH ONE-HOT ENCODING -->
+  <section class="slide" data-slide="4">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>The Problem with One-Hot Encoding</h2>
+      <p><strong>Traditional approach:</strong> Represent each word as a vector with one &ldquo;1&rdquo; and the rest &ldquo;0&rdquo;.</p>
+      <div class="code-block">"cat"    = [1, 0, 0, 0, 0, ...]
+"dog"    = [0, 1, 0, 0, 0, ...]
+"quantum"= [0, 0, 1, 0, 0, ...]</div>
+      <div class="highlight-box">
+        <strong>The fatal flaw:</strong> Every vector is equally different from every other. &ldquo;cat&rdquo; and &ldquo;dog&rdquo; are as different as &ldquo;cat&rdquo; and &ldquo;quantum.&rdquo;
+      </div>
+      <p>We lose <strong>all</strong> semantic relationships. The geometry of the vector space tells us nothing about meaning. One-hot vectors are orthogonal &mdash; the dot product between any two distinct words is always zero.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 5: THE BIG IDEA: DISTRIBUTED REPRESENTATIONS -->
+  <section class="slide" data-slide="5">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>The Big Idea: Distributed Representations</h2>
+      <div class="highlight-box" style="font-style:italic;">
+        &ldquo;A word is known by the company it keeps&rdquo; &mdash; J.R. Firth (1957)
+      </div>
+      <p>Instead of one &ldquo;1&rdquo; and many &ldquo;0&rdquo;s, we use a <strong>dense vector</strong> of small numbers.</p>
+      <div class="two-col">
+        <div class="col">
+          <div class="code-block" style="font-size:0.8rem;">"king"  = [0.8, 0.3, -0.1, 0.5, 0.2, -0.3, ...]
+"queen" = [0.7, 0.4, -0.2, 0.6, 0.1, -0.2, ...]</div>
+        </div>
+        <div class="col">
+          <ul class="key-list">
+            <li>Each dimension captures a <strong>latent feature</strong></li>
+            <li>Words with similar meanings have <strong>similar vectors</strong></li>
+            <li>Meaning is <strong>distributed</strong> across all dimensions</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6: THE MAP OF MEANING METAPHOR -->
+  <section class="slide" data-slide="6">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>The Map of Meaning Metaphor</h2>
+      <div class="diagram-box" style="min-height:160px; display:flex; flex-direction:column; justify-content:center;">
+        Legend:  &bull; = word in embedding space
+
+        Countries:    &bull;Nigeria  &bull;Ghana  &bull;Kenya  &bull;France  &bull;Italy
+        Fruits:       &bull;apple  &bull;orange  &bull;banana  &bull;mango  &bull;pawpaw
+        Animals:      &bull;dog  &bull;cat  &bull;horse  &bull;cow  &bull;goat
+        Actions:      &bull;run  &bull;walk  &bull;swim  &bull;fly  &bull;drive
+
+        <span style="color:#1a56db;">&larr;cluster Nigeria, Ghana, Kenya&rarr;</span>   <span style="color:#ea580c;">&larr;cluster apple, orange, banana&rarr;</span>
+      </div>
+      <p>Like a map where similar concepts are nearby cities. &ldquo;king&rdquo; is near &ldquo;queen,&rdquo; &ldquo;Paris&rdquo; is near &ldquo;France,&rdquo; &ldquo;malaria&rdquo; is near &ldquo;fever.&rdquo;</p>
+      <p>This is called the <strong>embedding space</strong> or <strong>semantic space</strong>.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 7: WORD2VEC -->
+  <section class="slide" data-slide="7">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Word2Vec</h2>
+      <p>Introduced by <strong>Mikolov et al.</strong> at Google (2013). A breakthrough method for learning high-quality word embeddings from large text corpora.</p>
+      <div class="two-col">
+        <div class="col">
+          <h3>CBOW (Continuous Bag of Words)</h3>
+          <p>Predict the target word from its surrounding context words.</p>
+          <div class="code-block" style="font-size:0.8rem;">Context: "The ___ sat on the mat"
+  Target: "cat"</div>
+        </div>
+        <div class="col">
+          <h3>Skip-gram</h3>
+          <p>Predict the surrounding context words from the target word.</p>
+          <div class="code-block" style="font-size:0.8rem;">Target: "cat"
+  Context: ["The", "sat", "on", "the", "mat"]</div>
+        </div>
+      </div>
+      <p><strong>Training on billions of words</strong> produces high-quality embeddings that capture rich semantic relationships.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 8: THE FAMOUS ANALOGY -->
+  <section class="slide" data-slide="8">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>The Famous Analogy</h2>
+      <div class="diagram-box" style="text-align:center; font-size:1.1rem; padding:24px;">
+        <span style="font-size:1.3rem; font-weight:700;">king &minus; man + woman = queen</span>
+        <br><br>
+        Vector direction &ldquo;man&rdquo; &rarr; &ldquo;woman&rdquo; represents <span class="label-colored">gender</span><br>
+        &ldquo;king&rdquo; &rarr; &ldquo;queen&rdquo; follows the <span class="label-colored">same direction</span>
+        <br><br>
+        <span class="arrow">&rArr;</span> <strong>Paris &minus; France + Italy = Rome</strong>
+      </div>
+      <p>This proves embeddings capture <strong>relational meaning</strong>. The vector arithmetic works because the geometry of the embedding space aligns with semantic dimensions.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 9: HEALTCARE EXAMPLE -->
+  <section class="slide" data-slide="9">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Healthcare Example</h2>
+      <div class="diagram-box" style="min-height:100px;">
+        &ldquo;fever&rdquo; &harr; &ldquo;temperature&rdquo;   (close in embedding space)
+        &ldquo;malaria&rdquo; &harr; &ldquo;mosquito&rdquo; &harr; &ldquo;symptoms&rdquo; &harr; &ldquo;fever&rdquo;
+        &ldquo;artemisinin&rdquo; &harr; &ldquo;malaria&rdquo; &harr; &ldquo;treatment&rdquo;
+      </div>
+      <ul class="key-list">
+        <li>&ldquo;fever&rdquo; and &ldquo;temperature&rdquo; are <strong>close</strong> in embedding space</li>
+        <li>&ldquo;malaria&rdquo; is close to &ldquo;mosquito,&rdquo; &ldquo;symptoms,&rdquo; &ldquo;fever&rdquo;</li>
+        <li><strong>Application:</strong> Finding related symptoms, drug interactions, similar patients</li>
+        <li>&ldquo;A doctor in Lagos prescribes artemisinin for malaria&rdquo; &mdash; embedding captures this relationship</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SLIDE 10: AGRICULTURE EXAMPLE -->
+  <section class="slide" data-slide="10">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Agriculture Example</h2>
+      <div class="diagram-box" style="min-height:100px;">
+        &ldquo;cassava&rdquo; &harr; &ldquo;maize&rdquo; &harr; &ldquo;yam&rdquo; &harr; &ldquo;sweet potato&rdquo;
+        &ldquo;drought&rdquo; &harr; &ldquo;resistant&rdquo; &harr; &ldquo;climate&rdquo; &harr; &ldquo;rainfall&rdquo;
+        &ldquo;farmer&rdquo; &harr; &ldquo;agriculture&rdquo; &harr; &ldquo;harvest&rdquo; &harr; &ldquo;crop&rdquo;
+      </div>
+      <ul class="key-list">
+        <li>&ldquo;cassava&rdquo; close to &ldquo;maize,&rdquo; &ldquo;yam,&rdquo; &ldquo;sweet potato&rdquo;</li>
+        <li>&ldquo;drought&rdquo; close to &ldquo;resistant,&rdquo; &ldquo;climate,&rdquo; &ldquo;rainfall&rdquo;</li>
+        <li><strong>Application:</strong> Crop disease detection systems can find related treatments</li>
+        <li>A query about &ldquo;cassava disease&rdquo; retrieves info about &ldquo;mosaic virus&rdquo;</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SLIDE 11: LIMITATIONS OF STATIC EMBEDDINGS -->
+  <section class="slide" data-slide="11">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Limitations of Static Embeddings</h2>
+      <div class="highlight-box orange" style="font-size:1.1rem;">
+        <strong>The &ldquo;bank&rdquo; problem:</strong> Same vector for all meanings.<br>
+        &ldquo;river bank&rdquo; and &ldquo;savings bank&rdquo; get the <strong>SAME</strong> embedding.
+      </div>
+      <ul class="question-list">
+        <li><strong>No context awareness</strong> &mdash; word meaning is frozen</li>
+        <li><strong>Can't handle polysemy</strong> &mdash; words with multiple meanings collapse into one vector</li>
+        <li><strong>Out-of-vocabulary (OOV)</strong> words are impossible to represent</li>
+        <li>Trained once and frozen &mdash; <strong>can't adapt</strong> to new domains or specialized vocabularies</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SLIDE 12: TRANSITION TO CONTEXTUAL EMBEDDINGS -->
+  <section class="slide" data-slide="12">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Transition to Contextual Embeddings</h2>
+      <p style="font-size:1.3rem; font-weight:500; color:#1a56db;">What if the embedding could <strong>change</strong> based on surrounding words?</p>
+      <div class="two-col">
+        <div class="col">
+          <div class="highlight-box">
+            &ldquo;I went to the <strong>bank</strong> to deposit money&rdquo;<br>
+            &rarr; <em>bank = financial institution</em>
+          </div>
+        </div>
+        <div class="col">
+          <div class="highlight-box orange">
+            &ldquo;I sat on the river <strong>bank</strong> to fish&rdquo;<br>
+            &rarr; <em>bank = riverside</em>
+          </div>
+        </div>
+      </div>
+      <p>This is the <strong>key insight</strong> behind BERT, GPT, and Gemma. Context matters &mdash; and embeddings should reflect that.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 13: BERT AND THE TRANSFORMER REVOLUTION -->
+  <section class="slide" data-slide="13">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>BERT &amp; The Transformer Revolution</h2>
+      <p><strong>BERT:</strong> Bidirectional Encoder Representations from Transformers (Devlin et al., 2018)</p>
+      <ul class="key-list">
+        <li><strong>Key innovation:</strong> Each word gets a different embedding based on its context</li>
+        <li>Uses the <strong>Transformer architecture</strong> (attention mechanism)</li>
+        <li>&ldquo;Bank&rdquo; in sentence A has a <strong>different embedding</strong> than &ldquo;bank&rdquo; in sentence B</li>
+      </ul>
+      <div class="highlight-box">
+        <strong>Masked Language Modeling:</strong><br>
+        &ldquo;I went to the <strong>[MASK]</strong> to deposit money&rdquo; &rarr; Predict &ldquo;bank&rdquo;
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 14: HOW CONTEXTUAL EMBEDDINGS WORK -->
+  <section class="slide" data-slide="14">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>How Contextual Embeddings Work</h2>
+      <div class="two-col">
+        <div class="col">
+          <div class="diagram-box">
+Input: "The bank approved my loan"
+
+Tokenizer
+  &darr;
+[CLS] The bank approved my loan [SEP]
+
+Transformer Layers
+  &darr;
+Context-dependent vectors
+
+<span class="label-colored">"bank" here = financial</span> (not riverside)
+          </div>
+        </div>
+        <div class="col">
+          <div class="diagram-box">
+Input: "The river bank was muddy"
+
+Tokenizer
+  &darr;
+[CLS] The river bank was muddy [SEP]
+
+Transformer Layers
+  &darr;
+Context-dependent vectors
+
+<span class="label-colored">"bank" here = riverside</span> (not financial)
+          </div>
+        </div>
+      </div>
+      <p>The <strong>same word</strong> &ldquo;bank&rdquo; produces <strong>different vectors</strong> depending on the surrounding context.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 15: STATIC VS CONTEXTUAL COMPARISON TABLE -->
+  <section class="slide" data-slide="15">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Static vs Contextual Embeddings</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Static (Word2Vec)</th>
+              <th>Contextual (BERT/Gemma)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>One vector per word?</td>
+              <td>Yes (same for all meanings)</td>
+              <td>No (depends on context)</td>
+            </tr>
+            <tr>
+              <td>Polysemy handling</td>
+              <td>Poor</td>
+              <td>Excellent</td>
+            </tr>
+            <tr>
+              <td>Training</td>
+              <td>Once, on large corpus</td>
+              <td>Pre-trained, fine-tunable</td>
+            </tr>
+            <tr>
+              <td>OOV words</td>
+              <td>Impossible</td>
+              <td>Can handle subword tokens</td>
+            </tr>
+            <tr>
+              <td>Compute needed</td>
+              <td>Low</td>
+              <td>High</td>
+            </tr>
+            <tr>
+              <td>Example: &ldquo;bank&rdquo;</td>
+              <td>Same vector</td>
+              <td>Different per sentence</td>
+            </tr>
+            <tr>
+              <td>Year introduced</td>
+              <td>2013</td>
+              <td>2018+</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 16: GEMMA - GOOGLE'S LATEST -->
+  <section class="slide" data-slide="16">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Gemma &mdash; Google's Latest</h2>
+      <p><strong>Gemma</strong> by Google DeepMind (2024) &mdash; built on the same architecture as Gemini.</p>
+      <ul class="key-list">
+        <li><strong>Open-source</strong> &mdash; available in 2B and 7B parameter sizes</li>
+        <li>Uses <strong>contextual embeddings</strong> with subword tokenization (256K vocabulary)</li>
+        <li>Designed for accessibility and research</li>
+      </ul>
+      <div class="two-col">
+        <div class="col">
+          <div class="highlight-box">
+            &ldquo;The <strong>doctor</strong> treated <strong>malaria</strong> patients&rdquo;<br>
+            &rarr; embeddings capture <strong>medical context</strong>
+          </div>
+        </div>
+        <div class="col">
+          <div class="highlight-box orange">
+            &ldquo;The <strong>farmer</strong> treated <strong>crops</strong> with pesticide&rdquo;<br>
+            &rarr; embeddings capture <strong>agricultural context</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 17: REAL-WORLD EXAMPLE: LEGAL TRANSLATION IN YORUBA -->
+  <section class="slide" data-slide="17">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Real-World Example: Legal Translation in Yor&ugrave;b&aacute;</h2>
+      <p><strong>Challenge:</strong> Translating legal documents from English to Yor&ugrave;b&aacute; with accurate semantic preservation.</p>
+      <div class="highlight-box">
+        &ldquo;The court hereby sentences the defendant to five years imprisonment&rdquo;
+      </div>
+      <ul class="question-list">
+        <li><strong>Static embedding:</strong> Each word has one meaning &mdash; &ldquo;court&rdquo; could mean basketball court</li>
+        <li><strong>Contextual embedding:</strong> &ldquo;court&rdquo; = legal context (not basketball)</li>
+        <li>Yor&ugrave;b&aacute; legal terms need <strong>culturally appropriate embeddings</strong></li>
+        <li>&ldquo;court&rdquo; &rarr; &ldquo;kootu&rdquo; (legal tribunal)</li>
+      </ul>
+      <p>This is only possible with <strong>contextual embeddings</strong> that disambiguate meaning based on surrounding words.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 18: CLIMATE APPLICATION: FLOOD EARLY WARNING -->
+  <section class="slide" data-slide="18">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Climate Application: Flood Early Warning</h2>
+      <div class="highlight-box">
+        &ldquo;Heavy rainfall expected in Lagos lagoon area&rdquo;
+      </div>
+      <p><strong>Embedding captures relationships:</strong></p>
+      <div class="diagram-box" style="min-height:80px;">
+        &ldquo;rainfall&rdquo; &rarr; &ldquo;flood&rdquo; &rarr; &ldquo;warning&rdquo; &rarr; &ldquo;evacuation&rdquo;
+        &ldquo;Lagos&rdquo; &rarr; &ldquo;lagoon&rdquo; &rarr; &ldquo;coastal&rdquo; &rarr; &ldquo;vulnerable&rdquo;
+      </div>
+      <ul class="key-list">
+        <li>System can find <strong>historical patterns</strong>: similar weather embeddings &rarr; past flood events</li>
+        <li>Enables <strong>proactive disaster response</strong> and early warning systems</li>
+        <li>Connects &ldquo;heavy rainfall&rdquo; to &ldquo;flood risk&rdquo; without explicit rules</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SLIDE 19: YOUR PROJECTS AND EMBEDDINGS -->
+  <section class="slide" data-slide="19">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Your Projects &amp; Embeddings</h2>
+      <div class="two-col">
+        <div class="col">
+          <div class="highlight-box">
+            <strong>&#x1F3E5; Healthcare</strong><br>
+            Patient symptom matching via embedding similarity
+          </div>
+          <div class="highlight-box orange" style="margin-top:10px;">
+            <strong>&#x1F33E; Agriculture</strong><br>
+            Crop disease FAQ retrieval: query &ldquo;cassava leaves yellowing&rdquo; &rarr; relevant advice
+          </div>
+        </div>
+        <div class="col">
+          <div class="highlight-box">
+            <strong>&#x1F4DA; Education</strong><br>
+            Semantic search for learning materials
+          </div>
+          <div class="highlight-box orange" style="margin-top:10px;">
+            <strong>&#x26A1; Climate</strong><br>
+            Similar weather pattern detection
+          </div>
+        </div>
+      </div>
+      <p style="margin-top:10px; color:#6b7280; font-size:0.95rem;">25% of cohort projects in Healthcare, 20% in Environment/Climate</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 20: CONCEPT CHECK QUESTIONS -->
+  <section class="slide" data-slide="20">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Concept Check</h2>
+      <ul class="question-list">
+        <li><strong>Q1:</strong> &ldquo;king &minus; man + woman = ?&rdquo; &rarr; <em>queen</em> (word vector arithmetic)</li>
+        <li><strong>Q2:</strong> Why does &ldquo;bank&rdquo; need different embeddings? &rarr; <em>Polysemy</em> (multiple meanings)</li>
+        <li><strong>Q3:</strong> What's the key difference between Word2Vec and BERT embeddings?</li>
+        <li><strong>Q4:</strong> How would you use embeddings in your project?</li>
+      </ul>
+      <div class="highlight-box" style="margin-top:16px;">
+        <strong>Poll these interactively</strong> &mdash; discuss with your neighbour and share your answers.
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 21: INTERACTIVE SCENARIO -->
+  <section class="slide" data-slide="21">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Interactive Scenario</h2>
+      <div class="scenario-card">
+        <h4>Scenario: Chatbot for Nigerian Farmers</h4>
+        <p><strong>Farmer asks:</strong> &ldquo;My cassava leaves are turning yellow&rdquo;</p>
+        <p>Your system needs to understand this is related to <strong>cassava mosaic disease</strong>.</p>
+      </div>
+      <ul class="question-list">
+        <li>How would embeddings help connect &ldquo;yellow leaves&rdquo; to &ldquo;mosaic disease&rdquo;?</li>
+        <li><strong>Static vs contextual</strong> &mdash; which would work better? Why?</li>
+      </ul>
+      <div class="highlight-box">
+        <strong>Think about it:</strong> &ldquo;yellow&rdquo; could mean cowardly, ripe fruit, or diseased leaves. Context matters.
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 22: VISUALIZING EMBEDDING SPACE -->
+  <section class="slide" data-slide="22">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Visualizing Embedding Space</h2>
+      <p>t-SNE / UMAP projection (2D view of high-dimensional space):</p>
+      <div class="diagram-box" style="min-height:160px; font-size:0.85rem; line-height:1.8;">
+        <strong style="color:#1a56db;">Medical cluster:</strong>
+          &bull;malaria  &bull;fever  &bull;treatment  &bull;symptoms  &bull;diagnosis  &bull;artemisinin
+
+        <strong style="color:#059669;">Agricultural cluster:</strong>
+          &bull;cassava  &bull;maize  &bull;yam  &bull;drought  &bull;harvest  &bull;crop
+
+        <strong style="color:#ea580c;">Legal cluster:</strong>
+          &bull;court  &bull;defendant  &bull;sentence  &bull;tribunal  &bull;judgment
+
+        <strong style="color:#7c3aed;">Climate cluster:</strong>
+          &bull;rainfall  &bull;flood  &bull;lagoon  &bull;coastal  &bull;evacuation
+      </div>
+      <p>The <strong>geometry of meaning</strong> &mdash; similar concepts cluster together in embedding space.</p>
+    </div>
+  </section>
+
+  <!-- SLIDE 23: NEXT STEPS & RESOURCES -->
+  <section class="slide" data-slide="23">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Next Steps &amp; Resources</h2>
+      <ul class="key-list">
+        <li><strong>Try Word2Vec:</strong> <code>gensim</code> library &mdash; train on your own corpus</li>
+        <li><strong>Explore BERT:</strong> Hugging Face <code>transformers</code> library</li>
+        <li><strong>Visualize embeddings:</strong> TensorFlow Embedding Projector</li>
+      </ul>
+      <h3 style="margin-top:16px;">Project Ideas Using Embeddings</h3>
+      <ul class="question-list">
+        <li>Semantic search for <strong>African agricultural knowledge</strong></li>
+        <li><strong>Medical symptom checker</strong> for rural clinics</li>
+        <li><strong>Legal document retrieval</strong> for paralegal aid</li>
+        <li><strong>Educational content recommendation</strong> based on learning goals</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- SLIDE 24: WRAP-UP -->
+  <section class="slide" data-slide="24">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Wrap-Up</h2>
+      <div class="two-col">
+        <div class="col">
+          <div class="highlight-box">
+            <strong>Key Takeaway 1</strong><br>
+            Embeddings convert <strong>meaning into vectors</strong>
+          </div>
+          <div class="highlight-box orange" style="margin-top:10px;">
+            <strong>Key Takeaway 3</strong><br>
+            Contextual embeddings (BERT/Gemma) <strong>understand polysemy</strong>
+          </div>
+        </div>
+        <div class="col">
+          <div class="highlight-box">
+            <strong>Key Takeaway 2</strong><br>
+            Static embeddings (Word2Vec) are <strong>simple but powerful</strong>
+          </div>
+          <div class="highlight-box orange" style="margin-top:10px;">
+            <strong>Key Takeaway 4</strong><br>
+            Embeddings enable <strong>search, recommendation, translation, and more</strong>
+          </div>
+        </div>
+      </div>
+      <div class="highlight-box" style="text-align:center; margin-top:16px; font-size:1.1rem;">
+        <strong>Next session:</strong> Building on these concepts
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 25: READINGS SECTION -->
+  <section class="slide" data-slide="25">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Pre-Lecture &amp; Further Reading</h2>
+      <div class="reading-section">
+        <h4>Required Reading</h4>
+        <ul>
+          <li>&ldquo;Efficient Estimation of Word Representations in Vector Space&rdquo; (Mikolov et al. 2013)</li>
+          <li>&ldquo;BERT: Pre-training of Deep Bidirectional Transformers&rdquo; (Devlin et al. 2018)</li>
+          <li>Jay Alammar's &ldquo;The Illustrated Word2vec&rdquo;</li>
+          <li>Jay Alammar's &ldquo;The Illustrated BERT&rdquo;</li>
+        </ul>
+      </div>
+      <div class="reading-section">
+        <h4>Recommended Reading</h4>
+        <ul>
+          <li>Google DeepMind: &ldquo;Representation Learning&rdquo; course</li>
+          <li>&ldquo;Gemma: Open Models Based on Gemini Research and Technology&rdquo;</li>
+          <li>Stanford CS224n lecture notes on word vectors</li>
+          <li>TensorFlow Embedding Projector (interactive tool)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 26: FEEDBACK SECTION -->
+  <section class="slide" data-slide="26">
+    <div class="slide-header">
+      <div class="brand">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+          <rect width="32" height="32" rx="6" fill="#fff" opacity="0.15"/>
+          <path d="M16 6L6 12v8l10 6 10-6v-8L16 6z" stroke="#fff" stroke-width="1.5" fill="none"/>
+          <circle cx="16" cy="16" r="3" fill="#fbbf24"/>
+        </svg>
+        TRI <span>AI</span> Saturdays
+      </div>
+      <div class="meta">Cohort 10 &bull; <strong>Lecture Session 2</strong></div>
+    </div>
+    <div class="slide-body">
+      <h2>Session Feedback</h2>
+      <ul class="poll-list">
+        <li><strong>Poll 1:</strong> &ldquo;I understand the difference between static and contextual embeddings&rdquo; <span class="rating">(1&ndash;5)</span></li>
+        <li><strong>Poll 2:</strong> &ldquo;I can explain how Word2Vec works&rdquo; <span class="rating">(1&ndash;5)</span></li>
+        <li><strong>Poll 3:</strong> &ldquo;The &lsquo;bank&rsquo; example helped me understand polysemy&rdquo; <span class="rating">(Yes/No)</span></li>
+        <li><strong>Poll 4:</strong> &ldquo;What was the most interesting application?&rdquo; <span class="rating">(Open)</span></li>
+        <li><strong>Poll 5:</strong> &ldquo;One thing I want to learn more about&rdquo; <span class="rating">(Open)</span></li>
+        <li><strong>Poll 6:</strong> &ldquo;Session rating&rdquo; <span class="rating">(1&ndash;5)</span></li>
+      </ul>
+      <div class="highlight-box" style="margin-top:16px;">
+        Thank you for your feedback! Your responses help us improve future sessions.
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- NAVIGATION CONTROLS -->
+<div class="nav-controls">
+  <button id="prevSlide" title="Previous slide" aria-label="Previous slide">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  </button>
+  <span class="slide-indicator"><span id="currentSlideDisplay">1</span><span class="total-slides"> / 26</span></span>
+  <button id="nextSlide" title="Next slide" aria-label="Next slide">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+  </button>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const prevBtn = document.getElementById('prevSlide');
+  const nextBtn = document.getElementById('nextSlide');
+  const currentDisplay = document.getElementById('currentSlideDisplay');
+  const totalSlides = slides.length;
+
+  let currentSlide = 0;
+  let isTransitioning = false;
+
+  function showSlide(index) {
+    if (isTransitioning) return;
+    if (index < 0) index = 0;
+    if (index >= totalSlides) index = totalSlides - 1;
+    if (index === currentSlide) return;
+
+    isTransitioning = true;
+
+    const currentEl = slides[currentSlide];
+    const nextEl = slides[index];
+
+    currentEl.classList.remove('active');
+    nextEl.style.display = 'flex';
+
+    requestAnimationFrame(function() {
+      nextEl.classList.add('active');
+      currentEl.style.display = 'none';
+      currentSlide = index;
+      currentDisplay.textContent = currentSlide + 1;
+      isTransitioning = false;
+    });
+  }
+
+  function handlePrev() {
+    if (currentSlide > 0) showSlide(currentSlide - 1);
+  }
+
+  function handleNext() {
+    if (currentSlide < totalSlides - 1) showSlide(currentSlide + 1);
+  }
+
+  prevBtn.addEventListener('click', handlePrev);
+  nextBtn.addEventListener('click', handleNext);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault();
+      handlePrev();
+    } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault();
+      handleNext();
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      showSlide(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      showSlide(totalSlides - 1);
+    }
+  });
+
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  document.addEventListener('touchstart', function(e) {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  document.addEventListener('touchend', function(e) {
+    touchEndX = e.changedTouches[0].screenX;
+    const diff = touchStartX - touchEndX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) handleNext();
+      else handlePrev();
+    }
+  }, { passive: true });
+
+  slides.forEach(function(slide, i) {
+    if (i === 0) {
+      slide.style.display = 'flex';
+      slide.classList.add('active');
+    } else {
+      slide.style.display = 'none';
+    }
+  });
+
+  currentDisplay.textContent = 1;
+})();
+</script>
+
+</body>
+</html>

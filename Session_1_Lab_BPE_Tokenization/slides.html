@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRI AI Saturdays — Lab: Train a SLM with BPE Tokenizer</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Segoe UI', 'Inter', -apple-system, Roboto, sans-serif;
+  background: #f1f5f9;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+.slides-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+
+.slide {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  background-image: url('resources/full page with header and footer.png');
+  background-size: 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.slide.active {
+  opacity: 1;
+  visibility: visible;
+  position: relative;
+  z-index: 1;
+}
+
+.slide-content {
+  position: absolute;
+  top: 22%;
+  bottom: 10%;
+  left: 7%;
+  right: 7%;
+  overflow-y: auto;
+  padding: 4px 8px;
+}
+
+.slide-content::-webkit-scrollbar { width: 4px; }
+.slide-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+
+.slide-content h1 {
+  font-size: 38px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+  margin-bottom: 4px;
+}
+
+.slide-content h2 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #1a56db;
+  margin-bottom: 8px;
+}
+
+.slide-content h3 {
+  font-size: 17px;
+  font-weight: 600;
+  color: #334155;
+  margin: 8px 0 4px;
+}
+
+.slide-content p {
+  font-size: 15px;
+  line-height: 1.55;
+  margin-bottom: 6px;
+  color: #1e293b;
+}
+
+.slide-content ul, .slide-content ol {
+  margin: 3px 0 6px 20px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #1e293b;
+}
+
+.slide-content li { margin-bottom: 2px; }
+.slide-content strong { color: #0f172a; font-weight: 600; }
+
+.slide-content code {
+  background: #f1f5f9;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #b45309;
+  border: 1px solid #e2e8f0;
+}
+
+.slide-content pre {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 5px 0;
+  overflow-x: auto;
+  font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #1e293b;
+}
+
+.slide-content pre code {
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  color: #1e293b;
+  border: none;
+}
+
+.cm { color: #64748b; font-style: italic; }
+.kw { color: #1d4ed8; font-weight: 600; }
+.st { color: #059669; }
+.fn { color: #7c3aed; }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 8px;
+  margin: 4px 0;
+}
+
+.card {
+  background: rgba(255,255,255,0.75);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.card h4 { font-size: 14px; font-weight: 600; color: #1a56db; margin-bottom: 3px; }
+.card p, .card li { font-size: 13px; line-height: 1.45; color: #334155; }
+.card ul { margin: 2px 0 0 14px; }
+
+.visual-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 6px 0;
+  flex-wrap: wrap;
+}
+
+.v-box {
+  background: #fff;
+  border: 2px solid #1a56db;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 14px;
+  color: #1e293b;
+  font-weight: 500;
+}
+
+.v-arrow { color: #ea580c; font-size: 18px; font-weight: 700; }
+
+.timeline {
+  display: flex;
+  width: 100%;
+  margin: 8px 0;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 26px;
+  font-weight: 600;
+  font-size: 11px;
+  color: #fff;
+  text-align: center;
+  line-height: 26px;
+}
+.timeline .seg { flex: 1; }
+.timeline .seg.setup { background: #2563eb; flex: 1; }
+.timeline .seg.theory { background: #7c3aed; flex: 1; }
+.timeline .seg.coding { background: #ea580c; flex: 6; }
+.timeline .seg.analysis { background: #d97706; flex: 2; }
+.timeline .seg.wrap { background: #059669; flex: 1.5; }
+
+.nav-bar {
+  position: absolute;
+  bottom: 1%;
+  left: 7%;
+  right: 7%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 4px;
+}
+.nav-btn {
+  background: rgba(255,255,255,0.85);
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 4px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+.nav-btn:hover:not(:disabled) { background: #fff; border-color: #1a56db; color: #1a56db; }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.nav-btn.primary { background: #1a56db; border-color: #1a56db; color: #fff; }
+.nav-btn.primary:hover:not(:disabled) { background: #1e40af; }
+.slide-indicator { font-size: 12px; font-weight: 500; color: #64748b; background: rgba(255,255,255,0.7); padding: 2px 10px; border-radius: 4px; }
+
+/* Title slide */
+.slide.title-slide .slide-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+.slide.title-slide .title-main { font-size: 44px; color: #1a56db; margin-bottom: 6px; }
+.slide.title-slide .title-sub { font-size: 18px; color: #475569; margin-bottom: 12px; }
+.slide.title-slide .title-badges { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 4px 0; }
+.slide.title-slide .badge {
+  background: #fff;
+  padding: 4px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #475569;
+  border: 1px solid #e2e8f0;
+}
+
+/* About slide */
+.about-row { display: flex; align-items: center; gap: 20px; margin: 8px 0; flex-wrap: wrap; }
+.about-avatar {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; font-weight: 700; color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+/* Table */
+.table-wrap { overflow-x: auto; margin: 4px 0; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th {
+  background: #1a56db;
+  color: #fff;
+  padding: 6px 10px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+tbody td {
+  padding: 5px 10px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1e293b;
+}
+tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
+
+/* Diagram */
+.diagram {
+  font-family: 'Cascadia Code', 'Consolas', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 5px 0;
+  white-space: pre;
+  overflow-x: auto;
+  color: #1e293b;
+}
+.diagram .hl { color: #ea580c; font-weight: 600; }
+.diagram .bl { color: #1d4ed8; font-weight: 600; }
+
+@media (max-width: 900px) {
+  .slide-content { top: 16%; bottom: 11%; left: 5%; right: 5%; }
+  .slide-content h1 { font-size: 28px; }
+  .slide-content h2 { font-size: 20px; }
+  .slide.title-slide .title-main { font-size: 30px; }
+}
+</style>
+</head>
+<body>
+
+<div class="slides-container" id="slidesContainer">
+
+<!-- ===== SLIDE 1 — TITLE ===== -->
+<section class="slide title-slide active" data-slide="1">
+  <div class="slide-content">
+    <div class="title-main">Train a SLM with<br>a BPE Tokenizer</div>
+    <div class="title-sub">TRI AI Saturdays — Cohort 10 &middot; Lab Session</div>
+    <div style="font-size:15px;color:#475569;margin-bottom:10px;">Wednesday, July 8, 2026 &middot; 7–9 PM WAT</div>
+    <div class="title-badges">
+      <span class="badge">&#9670; In partnership with Google DeepMind</span>
+      <span class="badge">&#9670; Instructor: Kaletsidik Ayalew</span>
+    </div>
+    <div style="margin-top:20px;font-size:13px;color:#64748b;">From text to tokens to a tiny brain — all in one session</div>
+  </div>
+  <nav class="nav-bar">
+    <div></div>
+    <div class="slide-indicator">1 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 2 — ABOUT ME ===== -->
+<section class="slide" data-slide="2">
+  <div class="slide-content">
+    <h2>About Your Instructor</h2>
+    <div class="about-row">
+      <div class="about-avatar">K</div>
+      <div>
+        <h3 style="margin:0 0 4px;font-size:22px;">Kaletsidik Ayalew</h3>
+        <p style="font-size:16px;color:#ea580c;margin-bottom:6px;">AI/ML Engineer &amp; Data Scientist</p>
+        <p style="font-size:14px;">Building AI solutions that bridge cutting-edge research with real-world impact. Passionate about making deep learning accessible to everyone.</p>
+        <p style="font-size:13px;margin-top:4px;">&#128279; <a href="https://github.com/AlexKalll" target="_blank" style="color:#1a56db;">github.com/AlexKalll</a></p>
+      </div>
+    </div>
+    <div class="card-grid" style="margin-top:6px;">
+      <div class="card">
+        <h4>&#128187; What I Do</h4>
+        <p>Design and deploy ML models for production — NLP, computer vision, and beyond.</p>
+      </div>
+      <div class="card">
+        <h4>&#127891; Why This Lab</h4>
+        <p>Understanding tokenization is the foundation of everything in modern AI. Let's build it together.</p>
+      </div>
+    </div>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">2 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 3 — LAB OVERVIEW ===== -->
+<section class="slide" data-slide="3">
+  <div class="slide-content">
+    <h2>What We'll Build in 2 Hours</h2>
+    <div class="timeline">
+      <div class="seg setup"><span class="label"></span>Setup</div>
+      <div class="seg theory"><span class="label"></span>BPE</div>
+      <div class="seg coding"><span class="label"></span>Coding Lab</div>
+      <div class="seg analysis"><span class="label"></span>SLM</div>
+      <div class="seg wrap"><span class="label"></span>Wrap</div>
+    </div>
+    <div class="card-grid">
+      <div class="card">
+        <h4>1. BPE From Scratch</h4>
+        <p>Build the same algorithm that powers GPT-4 &amp; Gemma — in pure Python. Learn exactly how text becomes numbers.</p>
+      </div>
+      <div class="card">
+        <h4>2. Sliding Window</h4>
+        <p>Turn raw text into thousands of "context → target" flashcards. This is how every language model learns.</p>
+      </div>
+      <div class="card">
+        <h4>3. Tiny Transformer</h4>
+        <p>Build a miniature neural network that predicts the next word. Watch the loss go down as it learns.</p>
+      </div>
+      <div class="card">
+        <h4>4. Text Generation</h4>
+        <p>Give it a prompt like "Jide was" and watch it autocomplete a story. Real AI, running live.</p>
+      </div>
+    </div>
+    <p style="margin-top:4px;font-size:13px;color:#64748b;"><strong>No prior ML experience needed.</strong> Just Python basics and curiosity.</p>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">3 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 4 — SETUP ===== -->
+<section class="slide" data-slide="4">
+  <div class="slide-content">
+    <h2>One-Time Setup</h2>
+    <p>Open the <strong>Colab Notebook</strong> or your local Python environment. Run these two blocks:</p>
+
+    <pre><code><span class="cm"># Install the tokenizer library</span>
+!pip install tiktoken -q
+
+<span class="cm"># Import everything we need</span>
+<span class="kw">import</span> re, math
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict, Counter
+<span class="kw">import</span> numpy <span class="kw">as</span> np, pandas <span class="kw">as</span> pd
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> torch, torch.nn <span class="kw">as</span> nn
+<span class="kw">from</span> torch.nn <span class="kw">import</span> functional <span class="kw">as</span> F
+<span class="kw">import</span> tiktoken
+
+<span class="cm"># Check for GPU</span>
+device = <span class="st">'cuda'</span> <span class="kw">if</span> torch.cuda.is_available() <span class="kw">else</span> <span class="st">'cpu'</span>
+print(<span class="st">f"Running on: {device.upper()}"</span>)</code></pre>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4>&#128218; Open the Colab Notebook</h4>
+        <p><a href="https://colab.research.google.com/drive/1u35rhvizI7oOXE9DeKrpOF7s-D5ktu4C?usp=sharing" target="_blank" style="color:#1a56db;">Click here &rarr;</a></p>
+        <p>Then <code>Runtime &rarr; Change runtime type</code> and select GPU. Free!</p>
+      </div>
+      <div class="card">
+        <h4>&#128187; Local users</h4>
+        <p><code>pip install torch numpy matplotlib tiktoken</code> in your virtual env.</p>
+      </div>
+    </div>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">4 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 5 — WHAT IS TOKENIZATION ===== -->
+<section class="slide" data-slide="5">
+  <div class="slide-content">
+    <h2>How Do We Turn Text Into Numbers?</h2>
+    <p>Computers don't understand words. They understand numbers. <strong>Tokenization</strong> is the bridge.</p>
+
+    <div class="visual-row">
+      <span class="v-box">"Cassava is a crop"</span>
+      <span class="v-arrow">&rarr;</span>
+      <span class="v-box" style="border-color:#ea580c;">[Token IDs]</span>
+      <span class="v-arrow">&rarr;</span>
+      <span class="v-box" style="border-color:#059669;">Model</span>
+    </div>
+
+    <h3>Three Ways to Split Text</h3>
+    <div class="card-grid">
+      <div class="card">
+        <h4>Word-level</h4>
+        <p><code>["Cassava","is","a","crop"]</code></p>
+        <p>Simple but fails on new words. Need huge vocabulary (500K+ words).</p>
+      </div>
+      <div class="card">
+        <h4>Character-level</h4>
+        <p><code>["C","a","s","s","a","v","a"," ","i","s",...]</code></p>
+        <p>Handles any word but makes very long sequences — slow training.</p>
+      </div>
+      <div class="card">
+        <h4>Subword (BPE)</h4>
+        <p><code>["Cass","ava","is","a","crop"]</code></p>
+        <p><strong>Best of both worlds.</strong> Common words = 1 token. Rare words = split into pieces.</p>
+      </div>
+    </div>
+    <p style="font-size:14px;"><strong>BPE (Byte-Pair Encoding)</strong> is what GPT-4, Gemma, LLaMA, and Claude all use.</p>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">5 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 6 — BPE ALGORITHM ===== -->
+<section class="slide" data-slide="6">
+  <div class="slide-content">
+    <h2>How BPE Works (Simple Version)</h2>
+    <p>Imagine you're a toddler learning to read. You start with letters, then notice some pairs appear together a lot.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4>Step 1</h4>
+        <p>Split every word into individual letters + a word-end marker <code>&lt;/w&gt;</code></p>
+        <p style="font-size:12px;color:#64748b;">Example: "crop" → "c r o p &lt;/w&gt;"</p>
+      </div>
+      <div class="card">
+        <h4>Step 2</h4>
+        <p>Count every adjacent pair. Find the most frequent one.</p>
+        <p style="font-size:12px;color:#64748b;">("c","a"): 2 times, ("a","&lt;/w&gt;"): 9 times ...</p>
+      </div>
+      <div class="card">
+        <h4>Step 3</h4>
+        <p>Merge the winner into a new single token everywhere.</p>
+        <p style="font-size:12px;color:#64748b;">"c a" → "ca" (now treated as one unit)</p>
+      </div>
+      <div class="card">
+        <h4>Step 4</h4>
+        <p>Repeat until you reach your target vocabulary size.</p>
+        <p style="font-size:12px;color:#64748b;">50 merges → 80 tokens. 1000 merges → 1000+ tokens.</p>
+      </div>
+    </div>
+
+    <div class="diagram"><span class="hl">Analogy:</span> Like building with Lego
+  Start with single studs (letters).
+  Merge the most-used pairs into bigger bricks.
+  Now "cassava" might be built from "cass" + "ava" instead of 7 separate letters.</div>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">6 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 7 — VISUAL PIPELINE ===== -->
+<section class="slide" data-slide="7">
+  <div class="slide-content">
+    <h2>BPE in Action — Example</h2>
+    <p>Tracing the algorithm on a tiny agriculture corpus.</p>
+
+    <div class="diagram"><span class="hl">Corpus:</span> "cassava maize cassava"
+
+<span class="cm"># Step 1 — Break into characters + &lt;/w&gt;</span>
+c a s s a v a &lt;/w&gt;   m a i z e &lt;/w&gt;   c a s s a v a &lt;/w&gt;
+
+<span class="cm"># Step 2 — Find most frequent adjacent pair</span>
+("a","&lt;/w&gt;") appears 3 times ← <span class="hl">winner!</span>
+("c","a") appears 2 times
+("a","s") appears 2 times
+
+<span class="cm"># Step 3 — Merge "a&lt;/w&gt;" everywhere</span>
+c a s s a v a&lt;/w&gt;   m a i z e&lt;/w&gt;   c a s s a v a&lt;/w&gt;
+
+<span class="cm"># Step 4 — Repeat</span>
+Next: ("a","v") → "av"
+Then: ("av","a") → "ava"
+Then: ("c","a") → "ca"
+... after 50 merges we get subwords like <span class="hl">"cass"</span>, <span class="hl">"ava"</span>, <span class="hl">"maiz"</span></div>
+
+    <p style="font-size:14px;">Each merge creates a new subword. The <strong>order of merges</strong> reveals the statistical patterns in your text.</p>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">7 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 8 — FROM SCRATCH CODE ===== -->
+<section class="slide" data-slide="8">
+  <div class="slide-content">
+    <h2>BPE in 4 Functions</h2>
+    <p>We only need 4 small functions to build BPE from scratch. Let's read them together.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4><code>get_vocab()</code></h4>
+        <p>Break text into words → split into characters → add <code>&lt;/w&gt;</code></p>
+      </div>
+      <div class="card">
+        <h4><code>get_stats()</code></h4>
+        <p>Count how often every pair of symbols appears together.</p>
+      </div>
+      <div class="card">
+        <h4><code>merge_vocab()</code></h4>
+        <p>Replace the most frequent pair with a new merged token.</p>
+      </div>
+      <div class="card">
+        <h4><code>bpe_train()</code></h4>
+        <p>Loop: count → merge → repeat until target vocab size.</p>
+      </div>
+    </div>
+
+    <pre><code><span class="kw">def</span> <span class="fn">get_vocab</span>(corpus):
+    vocab = {}
+    <span class="kw">for</span> word <span class="kw">in</span> corpus.lower().split():
+        tokenized = <span class="st">" "</span>.join(list(word)) + <span class="st">" &lt;/w&gt;"</span>
+        vocab[tokenized] = vocab.get(tokenized, 0) + 1
+    <span class="kw">return</span> vocab
+
+<span class="kw">def</span> <span class="fn">get_stats</span>(vocab):
+    pairs = defaultdict(int)
+    <span class="kw">for</span> word, freq <span class="kw">in</span> vocab.items():
+        symbols = word.split()
+        <span class="kw">for</span> i <span class="kw">in</span> range(len(symbols) - 1):
+            pairs[(symbols[i], symbols[i+1])] += freq
+    <span class="kw">return</span> pairs
+
+<span class="kw">def</span> <span class="fn">merge_vocab</span>(pair, vocab):
+    a, b = pair
+    merged = a + b.replace(<span class="st">"&lt;/w&gt;"</span>, <span class="st">""</span>)
+    pattern = <span class="st">" "</span>.join([a, b])
+    new_vocab = {}
+    <span class="kw">for</span> word, freq <span class="kw">in</span> vocab.items():
+        new_vocab[word.replace(pattern, merged)] = freq
+    <span class="kw">return</span> new_vocab</code></pre>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">8 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 9 — TRAINING BPE ===== -->
+<section class="slide" data-slide="9">
+  <div class="slide-content">
+    <h2>Let's Train It!</h2>
+    <p>We'll feed BPE sentences about African farming and watch it learn.</p>
+
+    <pre><code>CORPUS = <span class="st">"Cassava is a major food crop in Nigeria and across sub-Saharan Africa. Farmers in Kenya grow maize beans and sweet potatoes. The cocoa industry in Ghana and Ivory Coast produces most of the world's chocolate. Climate change affects rainfall patterns across East Africa. Drought resistant crops like millet and sorghum are important for food security. Smallholder farmers use sustainable farming practices to improve crop yields."</span>
+
+<span class="cm"># Train to 50 total tokens (starts from ~30 letters)</span>
+merges, final_vocab, _ = bpe_train(CORPUS, vocab_size=50)
+
+<span class="cm"># Sample output you'll see:</span>
+Merge 1: <span class="st">'a'</span> + <span class="st">'&lt;/w&gt;'</span>  →  <span class="hl">"a&lt;/w&gt;"</span>
+Merge 5: <span class="st">'t'</span> + <span class="st">'h'</span>    →  <span class="hl">"th"</span>
+Merge 10: <span class="st">'in'</span> + <span class="st">'g'</span>   →  <span class="hl">"ing"</span></code></pre>
+
+    <p>Then we tokenize a new sentence:</p>
+    <pre><code>test = <span class="st">"Farmers grow cassava in Nigeria"</span>
+tokens = tokenize_bpe(test, merges)
+print(tokens)  <span class="cm"># → ['Farm', 'ers', 'grow', 'cass', 'ava', 'in', 'Nig', 'eri', 'a']</span></code></pre>
+
+    <p style="font-size:14px;">Notice how "cassava" splits into <code>cass + ava</code> — the algorithm learned that "cass" and "ava" are useful subwords!</p>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">9 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 10 — PRODUCTION TOKENIZER ===== -->
+<section class="slide" data-slide="10">
+  <div class="slide-content">
+    <h2>Switch to a Production Tokenizer</h2>
+    <p>Our custom BPE works, but it only has 50 tokens. Real LLMs use <strong>100,000+ tokens</strong>. Let's use <code>tiktoken</code> — the tokenizer behind GPT-4.</p>
+
+    <pre><code><span class="cm"># Tiktoken has ~100K tokens trained on billions of pages</span>
+enc = tiktoken.get_encoding(<span class="st">"cl100k_base"</span>)
+
+<span class="cm"># Our tiny story for training</span>
+raw_text = <span class="st">"""Jide was hungry so she went looking for food. She checked the market, but it was closed. Then, she found a small cafe and ordered some rice and water. She was very happy to finally eat!"""</span>
+
+<span class="cm"># Encode: text → numbers</span>
+data = torch.tensor(enc.encode(raw_text), dtype=torch.long)
+
+print(<span class="st">f"Characters: {len(raw_text)} → Tokens: {len(data)}"</span>)
+<span class="cm"># Output: "Characters: 188 → Tokens: 43"</span>
+
+<span class="cm"># Decode a token back to prove it works</span>
+print(enc.decode([data[0].item()]))  <span class="cm"># → "Jide"</span></code></pre>
+
+    <p><strong>43 tokens</strong> to represent 188 characters. That's the power of a good tokenizer — it compresses text efficiently.</p>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">10 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 11 — SLIDING WINDOW ===== -->
+<section class="slide" data-slide="11">
+  <div class="slide-content">
+    <h2>Creating Training Data: The Sliding Window</h2>
+    <p>A language model's only job: <strong>predict the next token</strong>. We create flashcards: "Given these tokens, what comes next?"</p>
+
+    <div class="visual-row">
+      <span class="v-box" style="background:#eff6ff;border-color:#2563eb;">Context</span>
+      <span class="v-arrow">&rarr;</span>
+      <span class="v-box" style="background:#fff7ed;border-color:#ea580c;">Target</span>
+    </div>
+
+    <pre><code>block_size = 8  <span class="cm"># How many tokens the model sees at once</span>
+batch_size = 4  <span class="cm"># How many examples we process together</span>
+
+<span class="kw">def</span> <span class="fn">get_batch</span>():
+    ix = torch.randint(len(data) - block_size, (batch_size,))
+    x = torch.stack([data[i:i+block_size] <span class="kw">for</span> i <span class="kw">in</span> ix])  <span class="cm"># Context</span>
+    y = torch.stack([data[i+1:i+block_size+1] <span class="kw">for</span> i <span class="kw">in</span> ix])  <span class="cm"># Target</span>
+    <span class="kw">return</span> x.to(device), y.to(device)</code></pre>
+
+    <div class="diagram"><span class="hl">Example flashcard:</span>
+Context:  "Jide was hungry so she went look"
+Target:   " was hungry so she went looking for"</div>
+
+    <p style="font-size:14px;">The model sees 8 tokens at a time and must predict token #9. We make thousands of these from our tiny story.</p>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">11 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 12 — TINY TRANSFORMER ===== -->
+<section class="slide" data-slide="12">
+  <div class="slide-content">
+    <h2>The Tiny Brain: Our SLM Architecture</h2>
+    <p>A miniature version of what powers ChatGPT. Two main parts:</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4>1. Embedding Layer</h4>
+        <p>A lookup table. Each token ID → a vector of 32 numbers. Similar tokens get similar vectors.</p>
+        <pre style="font-size:11px;margin:4px 0 0;">nn.Embedding(vocab_size, n_embd=32)</pre>
+      </div>
+      <div class="card">
+        <h4>2. Linear Head</h4>
+        <p>Takes the embedding vector and predicts which token comes next. Like a "what's the most likely next word?" machine.</p>
+        <pre style="font-size:11px;margin:4px 0 0;">nn.Linear(n_embd, vocab_size)</pre>
+      </div>
+    </div>
+
+    <pre><code><span class="kw">class</span> <span class="fn">TinySLM</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, vocab_size, n_embd):
+        <span class="kw">super</span>().<span class="fn">__init__</span>()
+        self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
+        self.lm_head = nn.Linear(n_embd, vocab_size)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, idx, targets=None):
+        tok_emb = self.token_embedding_table(idx)
+        logits = self.lm_head(tok_emb)
+        <span class="kw">if</span> targets <span class="kw">is</span> <span class="kw">None</span>:
+            <span class="kw">return</span> logits, <span class="kw">None</span>
+        B, T, C = logits.shape
+        loss = F.cross_entropy(logits.view(B*T, C), targets.view(B*T))
+        <span class="kw">return</span> logits, loss</code></pre>
+
+    <p style="font-size:14px;">Total: <strong>~3.2 million parameters</strong>. Tiny by today's standards (GPT-4 has trillions), but enough to learn patterns!</p>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">12 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 13 — TRAINING LOOP ===== -->
+<section class="slide" data-slide="13">
+  <div class="slide-content">
+    <h2>Training: Becoming Less Wrong</h2>
+    <p>A fresh model guesses randomly. Training fixes that — one tiny adjustment at a time.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4>1. Forward Pass</h4>
+        <p>Feed context, get prediction, calculate loss. Loss = "how wrong are we?" (lower is better)</p>
+      </div>
+      <div class="card">
+        <h4>2. Backward Pass</h4>
+        <p>Use <code>loss.backward()</code> to calculate the gradient — the direction to nudge each weight.</p>
+      </div>
+      <div class="card">
+        <h4>3. Update Weights</h4>
+        <p><code>optimizer.step()</code> applies the nudges. The model becomes slightly less wrong.</p>
+      </div>
+    </div>
+
+    <pre><code>optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
+
+<span class="kw">for</span> step <span class="kw">in</span> range(600):
+    xb, yb = get_batch()                <span class="cm"># Grab a batch</span>
+    logits, loss = model(xb, yb)         <span class="cm"># Forward pass</span>
+    optimizer.zero_grad(set_to_none=True)
+    loss.backward()                      <span class="cm"># Backward pass</span>
+    optimizer.step()                     <span class="cm"># Update weights</span>
+    <span class="kw">if</span> step % 100 == 0:
+        print(<span class="st">f"Step {step}: Loss = {loss.item():.4f}"</span>)</code></pre>
+
+    <p>Watch the loss go from <strong>~10</strong> (random guessing) down to <strong>~1.5</strong> (learning patterns).</p>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">13 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 14 — GENERATION ===== -->
+<section class="slide" data-slide="14">
+  <div class="slide-content">
+    <h2>Let It Speak!</h2>
+    <p>After training, our tiny model can generate text. We give it a starting word and ask: "What comes next?"</p>
+
+    <pre><code><span class="kw">def</span> <span class="fn">generate</span>(self, idx, max_new_tokens):
+    <span class="kw">for</span> _ <span class="kw">in</span> range(max_new_tokens):
+        idx_cond = idx[:, -block_size:]         <span class="cm"># Only use last 8 tokens</span>
+        logits, _ = self(idx_cond)               <span class="cm"># Predict</span>
+        logits = logits[:, -1, :]                <span class="cm"># Focus on last position</span>
+        probs = F.softmax(logits, dim=-1)        <span class="cm"># Convert to probabilities</span>
+        idx_next = torch.multinomial(probs, 1)   <span class="cm"># Sample</span>
+        idx = torch.cat((idx, idx_next), dim=1)  <span class="cm"># Append</span>
+    <span class="kw">return</span> idx</code></pre>
+
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin:6px 0;">
+      <p style="font-size:14px;margin:0;color:#1e293b;"><strong>Prompt:</strong> "Jide was"</p>
+      <p style="font-size:14px;margin:4px 0;"><strong>Model output:</strong> <span style="color:#059669;">Jide was hungry so she went looking for food. She checked the market but it was closed. Then she found a small cafe</span></p>
+      <p style="font-size:12px;color:#64748b;margin:2px 0 0;">Your output will look different — the model samples randomly from probabilities!</p>
+    </div>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">14 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 15 — MAKING IT BETTER ===== -->
+<section class="slide" data-slide="15">
+  <div class="slide-content">
+    <h2>Making Our Model Smarter</h2>
+    <p>Our first model was tiny (32-dim embeddings, 8-token context, 600 steps). Let's level up.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4>&#8593; block_size: 8 → 32</h4>
+        <p>Wider context window = the model sees more of the story before predicting. More coherent text.</p>
+      </div>
+      <div class="card">
+        <h4>&#8593; n_embd: 32 → 64</h4>
+        <p>Richer token representations. Each word gets a more detailed vector. Better pattern capture.</p>
+      </div>
+      <div class="card">
+        <h4>&#8593; Steps: 600 → 5000</h4>
+        <p>More training = more chances to learn. Each pass refines the weights a little more.</p>
+      </div>
+    </div>
+
+    <p style="font-size:14px;margin-top:4px;"><strong>Result:</strong> A model that generates much more coherent text. <a href="https://colab.research.google.com/drive/1u35rhvizI7oOXE9DeKrpOF7s-D5ktu4C?usp=sharing" target="_blank" style="color:#1a56db;">Try it in Colab</a> — change these 3 numbers and watch the difference!</p>
+
+    <div class="visual-row" style="margin-top:4px;">
+      <span class="v-box" style="background:#fef2f2;border-color:#ef4444;border-width:2px;">Before: Jide was hungry she market closed market</span>
+      <span class="v-arrow" style="color:#059669;">&rarr;</span>
+      <span class="v-box" style="background:#f0fdf4;border-color:#059669;border-width:2px;">After: Jide was hungry so she went looking for food</span>
+    </div>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">15 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 16 — KEY TAKEAWAYS ===== -->
+<section class="slide" data-slide="16">
+  <div class="slide-content">
+    <h2>What You Learned Today</h2>
+
+    <div class="card-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="card" style="background:#eff6ff;border-color:#bfdbfe;">
+        <h4 style="color:#1d4ed8;">1. BPE builds vocabulary by merging frequent pairs</h4>
+        <p>Start with characters, merge the most common pair, repeat. The merge order reveals language patterns.</p>
+      </div>
+      <div class="card" style="background:#fff7ed;border-color:#fed7aa;">
+        <h4 style="color:#c2410c;">2. Vocab size controls efficiency</h4>
+        <p>Smaller vocab = more tokens per word (handles rare words). Larger vocab = fewer tokens (faster, but bigger model).</p>
+      </div>
+      <div class="card" style="background:#f0fdf4;border-color:#bbf7d0;">
+        <h4 style="color:#15803d;">3. Sliding window creates training data</h4>
+        <p>Every language model learns by predicting the next token. The sliding window turns raw text into context→target flashcards.</p>
+      </div>
+      <div class="card" style="background:#f5f3ff;border-color:#ddd6fe;">
+        <h4 style="color:#6d28d9;">4. Even tiny models can learn patterns</h4>
+        <p>With only 3.2M parameters and a 4-sentence story, our model learned to generate coherent text. That's the magic of neural networks.</p>
+      </div>
+    </div>
+
+    <div style="background:#fff7ed;border-left:3px solid #ea580c;border-radius:6px;padding:8px 14px;margin-top:8px;">
+      <p style="margin:0;font-size:14px;color:#1e293b;"><strong>&#9755; Next Saturday:</strong> Word Embeddings. We'll take these tokens and learn dense vector representations. You'll understand how "king − man + woman = queen" works under the hood!</p>
+    </div>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">16 / 17</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 17 — THANK YOU / Q&A ===== -->
+<section class="slide" data-slide="17">
+  <div class="slide-content" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
+    <h2 style="font-size:36px;margin-bottom:8px;">Thank You!</h2>
+    <p style="font-size:18px;color:#475569;margin-bottom:20px;">Questions? Let's discuss.</p>
+
+    <div class="card-grid" style="max-width:540px;">
+      <div class="card">
+        <h4>&#128218; Colab Notebook</h4>
+        <p><a href="https://colab.research.google.com/drive/1u35rhvizI7oOXE9DeKrpOF7s-D5ktu4C?usp=sharing" target="_blank" style="color:#1a56db;">Run the full lab &rarr;</a></p>
+        <p style="font-size:12px;">All code from today, ready to run.</p>
+      </div>
+      <div class="card">
+        <h4>&#128279; GitHub Repo</h4>
+        <p><a href="https://github.com/AlexKalll/tri-AI-Teaching" target="_blank" style="color:#1a56db;">github.com/AlexKalll/tri-AI-Teaching</a></p>
+        <p style="font-size:12px;">Slides, code &amp; resources.</p>
+      </div>
+      <div class="card">
+        <h4>&#128197; Next Session</h4>
+        <p>Saturday, July 11, 2026<br>10 AM WAT &middot; <strong>Word Embeddings</strong></p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <h4>&#128640; Follow Me</h4>
+        <p style="margin-bottom:4px;"><a href="https://github.com/AlexKalll" target="_blank" style="color:#1a56db;font-weight:600;">github.com/AlexKalll</a></p>
+        <div style="display:inline-block;background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:4px 8px;margin-top:2px;">
+          <span style="font-size:11px;color:#64748b;">&#128247; Scan QR</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:12px;padding:8px 20px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;">
+      <p style="margin:0;font-size:13px;color:#64748b;">TRI AI Saturdays &middot; Cohort 10 &middot; In partnership with Google DeepMind</p>
+    </div>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">17 / 17</div>
+    <button class="nav-btn primary" onclick="goToSlide(1)">&#9650; Start Over</button>
+  </nav>
+</section>
+
+</div><!-- /slides-container -->
+
+<script>
+(function() {
+  'use strict';
+  var totalSlides = document.querySelectorAll('.slide').length;
+  var current = 1;
+
+  function updateSlide(index) {
+    if (index < 1 || index > totalSlides) return;
+    current = index;
+    var slides = document.querySelectorAll('.slide');
+    slides.forEach(function(s) { s.classList.remove('active'); });
+    var active = document.querySelector('[data-slide="' + index + '"]');
+    if (active) active.classList.add('active');
+    var indicators = document.querySelectorAll('.slide-indicator');
+    indicators.forEach(function(el) { el.textContent = index + ' / ' + totalSlides; });
+    window.scrollTo({ top: 0 });
+  }
+
+  window.nextSlide = function() { if (current < totalSlides) updateSlide(current + 1); };
+  window.prevSlide = function() { if (current > 1) updateSlide(current - 1); };
+  window.goToSlide = function(n) { updateSlide(n); };
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); nextSlide();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); prevSlide();
+    } else if (e.key === 'Home') {
+      e.preventDefault(); goToSlide(1);
+    } else if (e.key === 'End') {
+      e.preventDefault(); goToSlide(totalSlides);
+    }
+  });
+
+  updateSlide(1);
+})();
+</script>
+
+</body>
+</html>

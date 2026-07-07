@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Static vs Contextual Embeddings - Summary</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap');
+  
+  :root {
+    --blue: #1a56db;
+    --blue-light: #e8effb;
+    --blue-dark: #0f3a8c;
+    --orange: #ea580c;
+    --orange-light: #fff4ed;
+    --orange-dark: #9a3412;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-400: #9ca3af;
+    --gray-500: #6b7280;
+    --gray-600: #4b5563;
+    --gray-700: #374151;
+    --gray-800: #1f2937;
+    --gray-900: #111827;
+    --green: #059669;
+    --green-light: #ecfdf5;
+  }
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    line-height: 1.6;
+    padding: 40px 20px;
+  }
+  
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  
+  /* Header */
+  .header {
+    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
+    color: white;
+    padding: 48px 56px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 400px;
+    height: 400px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.06);
+  }
+  
+  .header-badge {
+    display: inline-block;
+    background: var(--orange);
+    color: white;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .header h1 {
+    font-size: 36px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .header h1 span {
+    color: #fbbf24;
+  }
+  
+  .header p {
+    font-size: 16px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 8px;
+    position: relative;
+    z-index: 1;
+    max-width: 650px;
+  }
+  
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    margin-top: 16px;
+    position: relative;
+    z-index: 1;
+  }
+  
+  .header-meta span {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  /* Content */
+  .content { padding: 48px 56px; }
+  
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 24px;
+  }
+  
+  /* Two-column layout */
+  .two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+    margin-bottom: 40px;
+  }
+  
+  @media (max-width: 768px) {
+    .two-column { grid-template-columns: 1fr; }
+    .header { padding: 32px 24px; }
+    .content { padding: 32px 24px; }
+  }
+  
+  .column {
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--gray-200);
+  }
+  
+  .column-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  
+  .column-static .column-header {
+    background: linear-gradient(135deg, #e8effb 0%, #dbeafe 100%);
+    border-bottom: 3px solid var(--blue);
+  }
+  
+  .column-contextual .column-header {
+    background: linear-gradient(135deg, #fff4ed 0%, #ffedd5 100%);
+    border-bottom: 3px solid var(--orange);
+  }
+  
+  .column-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+  
+  .column-static .column-icon { background: var(--blue); color: white; }
+  .column-contextual .column-icon { background: var(--orange); color: white; }
+  
+  .column-header h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--gray-900);
+  }
+  
+  .column-header .subtitle {
+    font-size: 13px;
+    color: var(--gray-500);
+    font-weight: 500;
+  }
+  
+  .column-body {
+    padding: 20px 24px;
+  }
+  
+  .feature-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .feature-list li {
+    padding: 8px 0;
+    font-size: 14px;
+    color: var(--gray-600);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  
+  .feature-list li::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+  
+  .column-static .feature-list li::before { background: var(--blue); }
+  .column-contextual .feature-list li::before { background: var(--orange); }
+  
+  .feature-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-400);
+    margin: 14px 0 8px;
+  }
+  
+  .feature-label:first-of-type { margin-top: 0; }
+  
+  .good-for-tag {
+    display: inline-block;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 6px;
+    margin: 2px 4px 2px 0;
+  }
+  
+  .limitation-tag {
+    display: inline-block;
+    background: #fee2e2;
+    color: #991b1b;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 6px;
+    margin: 2px 4px 2px 0;
+  }
+  
+  /* Example Box */
+  .example-box {
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 12px 0;
+  }
+  
+  .example-box .label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-400);
+    margin-bottom: 6px;
+  }
+  
+  .example-box .code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--gray-700);
+  }
+  
+  .example-box .highlight-blue {
+    background: #dbeafe;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+  
+  .example-box .highlight-orange {
+    background: #ffedd5;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-weight: 600;
+    color: var(--orange);
+  }
+  
+  /* Metaphor Section */
+  .metaphor-section {
+    background: linear-gradient(135deg, var(--gray-50) 0%, #f0fdf4 100%);
+    border: 1px solid var(--gray-200);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 40px;
+  }
+  
+  .metaphor-section h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .metaphor-section p {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin-bottom: 10px;
+  }
+  
+  .metaphor-section .highlight {
+    font-weight: 600;
+    color: var(--gray-800);
+  }
+  
+  /* Comparison Table */
+  .comparison-section {
+    margin-bottom: 40px;
+  }
+  
+  .comparison-section h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 16px;
+  }
+  
+  .comp-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  
+  .comp-table thead th {
+    background: var(--gray-100);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    border-bottom: 2px solid var(--gray-300);
+  }
+  
+  .comp-table thead th:first-child {
+    border-radius: 10px 0 0 0;
+  }
+  
+  .comp-table thead th:last-child {
+    border-radius: 0 10px 0 0;
+  }
+  
+  .comp-table tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gray-200);
+    color: var(--gray-600);
+  }
+  
+  .comp-table tbody tr:nth-child(even) {
+    background: var(--gray-50);
+  }
+  
+  .comp-table tbody td:first-child {
+    font-weight: 600;
+    color: var(--gray-700);
+  }
+  
+  .comp-table .winner {
+    color: var(--green);
+    font-weight: 600;
+  }
+  
+  .comp-table .winner::before {
+    content: '\2713\00A0';
+  }
+  
+  /* African Context */
+  .african-section {
+    background: linear-gradient(135deg, #fefce8 0%, #fffbeb 100%);
+    border: 1px solid #fde68a;
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 40px;
+  }
+  
+  .african-section h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .african-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  
+  @media (max-width: 768px) {
+    .african-grid { grid-template-columns: 1fr; }
+  }
+  
+  .african-card {
+    background: white;
+    border: 1px solid #fde68a;
+    border-radius: 12px;
+    padding: 18px;
+  }
+  
+  .african-card h5 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: 6px;
+  }
+  
+  .african-card p {
+    font-size: 13px;
+    color: var(--gray-600);
+  }
+  
+  .african-card .emoji-tag {
+    font-size: 20px;
+    margin-right: 6px;
+  }
+  
+  /* Arch diagram (simplified) */
+  .arch-section {
+    margin-bottom: 40px;
+  }
+  
+  .arch-section h4 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 16px;
+  }
+  
+  .arch-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 20px;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 12px;
+    font-size: 13px;
+  }
+  
+  .arch-flow .box {
+    background: white;
+    border: 1px solid var(--gray-300);
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-align: center;
+    font-weight: 500;
+    color: var(--gray-700);
+  }
+  
+  .arch-flow .box.blue-box {
+    border-color: var(--blue);
+    background: var(--blue-light);
+    color: var(--blue);
+  }
+  
+  .arch-flow .box.orange-box {
+    border-color: var(--orange);
+    background: var(--orange-light);
+    color: var(--orange);
+  }
+  
+  .arch-flow .arrow {
+    font-size: 18px;
+    color: var(--gray-400);
+    font-weight: 300;
+  }
+  
+  /* Footer */
+  .footer {
+    background: var(--gray-50);
+    border-top: 1px solid var(--gray-200);
+    padding: 24px 56px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--gray-500);
+  }
+  
+  .footer strong {
+    color: var(--gray-700);
+  }
+  
+  /* Print Styles */
+  @media print {
+    body {
+      padding: 0;
+      background: white;
+    }
+    
+    .page {
+      box-shadow: none;
+      border-radius: 0;
+    }
+    
+    .header {
+      padding: 32px 40px;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .content { padding: 32px 40px; }
+    
+    .two-column {
+      break-inside: avoid;
+    }
+    
+    .column {
+      break-inside: avoid;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .metaphor-section {
+      break-inside: avoid;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .african-section {
+      break-inside: avoid;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    
+    .comparison-section {
+      break-inside: avoid;
+    }
+    
+    .footer {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  
+  <div class="header">
+    <div class="header-badge">TRI AI Saturdays &middot; Cohort 10</div>
+    <h1>Static vs Contextual <span>Embeddings</span></h1>
+    <p>How do we represent words as numbers? From Word2Vec's fixed vectors to BERT's context-aware representations &mdash; and why it matters for African NLP.</p>
+    <div class="header-meta">
+      <span>&#9679; TRI AI / Google DeepMind</span>
+      <span>&#9679; Session 2</span>
+    </div>
+  </div>
+  
+  <div class="content">
+    
+    <h2 class="section-title">Two Eras of Word Representation</h2>
+    
+    <div class="two-column">
+      
+      <!-- Static Embeddings -->
+      <div class="column column-static">
+        <div class="column-header">
+          <div class="column-icon">&#9878;</div>
+          <div>
+            <h3>Static Embeddings</h3>
+            <div class="subtitle">Word2Vec &middot; GloVe &middot; FastText</div>
+          </div>
+        </div>
+        <div class="column-body">
+          
+          <div class="feature-label">Core Idea</div>
+          <ul class="feature-list">
+            <li>One vector per word &mdash; same for all meanings</li>
+            <li>Trained once on a large corpus, then frozen</li>
+            <li>Words with similar meanings have similar vectors</li>
+            <li>Semantic relationships are captured as vector arithmetic</li>
+          </ul>
+          
+          <div class="feature-label">Good For</div>
+          <p style="margin-top: 4px;">
+            <span class="good-for-tag">Simple similarity</span>
+            <span class="good-for-tag">Word analogies</span>
+            <span class="good-for-tag">Feature extraction</span>
+            <span class="good-for-tag">Baseline models</span>
+          </p>
+          
+          <div class="example-box">
+            <div class="label">Classic Example</div>
+            <div class="code">
+              vector(<span class="highlight-blue">"king"</span>) - vector(<span class="highlight-blue">"man"</span>) + vector(<span class="highlight-blue">"woman"</span>)<br>
+              &asymp; vector(<span class="highlight-blue">"queen"</span>)
+            </div>
+          </div>
+          
+          <div class="feature-label">Limitations</div>
+          <p style="margin-top: 4px;">
+            <span class="limitation-tag">Polysemy (the "bank" problem)</span>
+            <span class="limitation-tag">No context awareness</span>
+            <span class="limitation-tag">Fixed vocabulary (OOV)</span>
+          </p>
+          
+          <div class="example-box">
+            <div class="label">The "Bank" Problem</div>
+            <div class="code">
+              "I went to the <span class="highlight-blue">bank</span> to withdraw money."<br>
+              "The river <span class="highlight-blue">bank</span> was muddy."<br><br>
+              <span style="color: var(--gray-400);">Both get the SAME vector in static embeddings.</span>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+      
+      <!-- Contextual Embeddings -->
+      <div class="column column-contextual">
+        <div class="column-header">
+          <div class="column-icon">&#9881;</div>
+          <div>
+            <h3>Contextual Embeddings</h3>
+            <div class="subtitle">BERT &middot; GPT &middot; Gemma &middot; T5</div>
+          </div>
+        </div>
+        <div class="column-body">
+          
+          <div class="feature-label">Core Idea</div>
+          <ul class="feature-list">
+            <li>Different vector per word per context</li>
+            <li>Pre-trained on massive data, can be fine-tuned</li>
+            <li>Uses attention to look at surrounding words</li>
+            <li>Subword tokenization handles unseen words</li>
+          </ul>
+          
+          <div class="feature-label">Good For</div>
+          <p style="margin-top: 4px;">
+            <span class="good-for-tag">Understanding nuance</span>
+            <span class="good-for-tag">Machine translation</span>
+            <span class="good-for-tag">Question answering</span>
+            <span class="good-for-tag">Sentiment analysis</span>
+          </p>
+          
+          <div class="example-box">
+            <div class="label">Context Matters</div>
+            <div class="code">
+              "I went to the <span class="highlight-orange">bank</span> to withdraw money."<br>
+              &rarr; vector<span style="font-size: 11px; color: var(--orange);"><sub>financial</sub></span><br><br>
+              "The river <span class="highlight-orange">bank</span> was muddy."<br>
+              &rarr; vector<span style="font-size: 11px; color: var(--orange);"><sub>geographic</sub></span><br><br>
+              <span style="color: var(--gray-400);">Different contexts = different vectors!</span>
+            </div>
+          </div>
+          
+          <div class="feature-label">How It Works</div>
+          <ul class="feature-list">
+            <li>Input: sequence of subword tokens</li>
+            <li>Transformer layers apply self-attention</li>
+            <li>Each token's representation is contextualized by all others</li>
+            <li>Output: one vector per token, informed by context</li>
+          </ul>
+          
+        </div>
+      </div>
+      
+    </div>
+    
+    <!-- Map of Meaning Metaphor -->
+    <div class="metaphor-section">
+      <h4>&#127758; The Map of Meaning Metaphor</h4>
+      <p>
+        Imagine words as locations on a map. <span class="highlight">Static embeddings</span> are like a paper atlas: 
+        every word has a fixed coordinate. "Bank" appears once on the map, even though it means two different things.
+        You cannot look up different meanings for different sentences.
+      </p>
+      <p>
+        <span class="highlight">Contextual embeddings</span> are like Google Maps with live traffic and context layers.
+        The same address can show different information depending on the time of day, your destination, and current conditions.
+        "Bank" adjusts its coordinates based on the words around it.
+      </p>
+      <p>
+        This matters for <span class="highlight">African languages</span> where a single word can carry many meanings depending on
+        tone, context, and regional dialect. Static embeddings collapse this richness into one point.
+        Contextual embeddings preserve it.
+      </p>
+    </div>
+    
+    <!-- Architecture Flow -->
+    <div class="arch-section">
+      <h4>&#128736; How Contextual Embeddings Are Built</h4>
+      <div class="arch-flow">
+        <span class="box">Token IDs</span>
+        <span class="arrow">&rarr;</span>
+        <span class="box blue-box">Token Embeddings</span>
+        <span class="arrow">&rarr;</span>
+        <span class="box">Position Encoding</span>
+        <span class="arrow">&rarr;</span>
+        <span class="box orange-box">Transformer Blocks<br><span style="font-size: 11px; font-weight: 400;">(Self-Attention + FFN)</span></span>
+        <span class="arrow">&rarr;</span>
+        <span class="box blue-box">Contextual Vectors<br><span style="font-size: 11px; font-weight: 400;">(one per token)</span></span>
+      </div>
+      <p style="text-align: center; font-size: 13px; color: var(--gray-500); margin-top: 10px;">
+        The key innovation: each token's final vector depends on ALL tokens in the sequence via self-attention
+      </p>
+    </div>
+    
+    <!-- Comparison Table -->
+    <div class="comparison-section">
+      <h4>&#128196; Comparison Table</h4>
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Static (Word2Vec)</th>
+            <th>Contextual (BERT/Gemma)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Vectors per word</td>
+            <td>One (fixed)</td>
+            <td class="winner">One per context (dynamic)</td>
+          </tr>
+          <tr>
+            <td>Handles polysemy</td>
+            <td>No &mdash; "bank" has one meaning</td>
+            <td class="winner">Yes &mdash; meaning changes with context</td>
+          </tr>
+          <tr>
+            <td>Training</td>
+            <td>Trained once, frozen</td>
+            <td class="winner">Pre-trained + fine-tuned</td>
+          </tr>
+          <tr>
+            <td>Out-of-vocabulary words</td>
+            <td>Unknown token or fail</td>
+            <td class="winner">Subword tokenization handles them</td>
+          </tr>
+          <tr>
+            <td>Compute needed</td>
+            <td class="winner">Low (shallow model)</td>
+            <td>High (deep Transformer)</td>
+          </tr>
+          <tr>
+            <td>Data needed</td>
+            <td>Moderate (~10B tokens)</td>
+            <td>Massive (~100B+ tokens)</td>
+          </tr>
+          <tr>
+            <td>Transfer learning</td>
+            <td>As input features only</td>
+            <td class="winner">Full fine-tuning or adapters</td>
+          </tr>
+          <tr>
+            <td>Interpretability</td>
+            <td class="winner">Direct word relationships</td>
+            <td>Complex attention patterns</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    
+    <!-- African Context -->
+    <div class="african-section">
+      <h4>&#127463;&#127466; African Context Examples</h4>
+      <div class="african-grid">
+        <div class="african-card">
+          <h5><span class="emoji-tag">&#128214;</span> Yoruba Legal Translation</h5>
+          <p>
+            The Yoruba word <em>"igba"</em> can mean <em>time</em>, <em>two hundred</em>, or <em>garden egg</em> depending on tone and context. 
+            Static embeddings lose this distinction. Contextual embeddings preserve it, enabling accurate legal document translation.
+          </p>
+        </div>
+        <div class="african-card">
+          <h5><span class="emoji-tag">&#127806;</span> Agricultural Advisory Systems</h5>
+          <p>
+            A chatbot for smallholder farmers in Kenya needs to understand <em>"maize"</em> differently in sentences about <em>planting</em>, 
+            <em>pest control</em>, and <em>market pricing</em>. Contextual embeddings make this possible without hand-crafted rules.
+          </p>
+        </div>
+        <div class="african-card">
+          <h5><span class="emoji-tag">&#127760;</span> Multilingual Search in Ghana</h5>
+          <p>
+            Users switch between Twi, Ewe, and English in the same query. Contextual embeddings can represent code-switched 
+            text naturally, while static embeddings would treat each language as a separate space.
+          </p>
+        </div>
+        <div class="african-card">
+          <h5><span class="emoji-tag">&#127891;</span> Low-Resource Language Models</h5>
+          <p>
+            With subword tokenization and transfer learning, contextual models can be adapted to African languages with 
+            limited data (e.g., Gemma fine-tuned on Wolof or Zulu), something impossible with static embeddings.
+          </p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Key Takeaway -->
+    <div style="background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border: 1px solid #bfdbfe; border-radius: 16px; padding: 24px 28px; text-align: center;">
+      <h4 style="font-size: 16px; font-weight: 700; color: var(--gray-900); margin-bottom: 8px;">&#128200; Key Takeaway</h4>
+      <p style="font-size: 15px; color: var(--gray-600);">
+        <strong>Static embeddings</strong> are fast, interpretable, and good for simple tasks. 
+        <strong>Contextual embeddings</strong> are more powerful, handle nuance, and are essential for real-world NLP.
+        Use static for prototyping baselines and low-resource settings; use contextual for production-quality systems.
+      </p>
+    </div>
+    
+  </div>
+  
+  <div class="footer">
+    <strong>TRI AI Saturdays Cohort 10</strong> &middot; Session 2: Static vs Contextual Embeddings &middot; In partnership with <strong>Google DeepMind</strong>
+  </div>
+  
+</div>
+
+</body>
+</html>

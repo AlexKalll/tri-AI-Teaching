@@ -698,17 +698,22 @@ Target:   " was hungry so she went looking for"</div>
 <section class="slide" data-slide="12">
   <div class="slide-content">
     <h2>The Tiny Brain: Our SLM Architecture</h2>
-    <p>A miniature version of what powers ChatGPT. Two main parts:</p>
+    <p>A miniature version of what powers ChatGPT. Three parts:</p>
 
     <div class="card-grid">
       <div class="card">
-        <h4>1. Embedding Layer</h4>
-        <p>A lookup table. Each token ID → a vector of 32 numbers. Similar tokens get similar vectors.</p>
+        <h4>1. Token Embedding</h4>
+        <p>Each token ID → a vector of 32 numbers. Similar words get similar vectors.</p>
         <pre style="font-size:11px;margin:4px 0 0;">nn.Embedding(vocab_size, n_embd=32)</pre>
       </div>
       <div class="card">
-        <h4>2. Linear Head</h4>
-        <p>Takes the embedding vector and predicts which token comes next. Like a "what's the most likely next word?" machine.</p>
+        <h4>2. Position Embedding</h4>
+        <p>Each position (1st, 2nd, 3rd...) → a vector. Helps the model know word order.</p>
+        <pre style="font-size:11px;margin:4px 0 0;">nn.Embedding(block_size, n_embd)</pre>
+      </div>
+      <div class="card">
+        <h4>3. Linear Head</h4>
+        <p>Predicts which token comes next. Like a "what's the most likely next word?" machine.</p>
         <pre style="font-size:11px;margin:4px 0 0;">nn.Linear(n_embd, vocab_size)</pre>
       </div>
     </div>
@@ -717,18 +722,23 @@ Target:   " was hungry so she went looking for"</div>
     <span class="kw">def</span> <span class="fn">__init__</span>(self, vocab_size, n_embd):
         <span class="kw">super</span>().<span class="fn">__init__</span>()
         self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
+        self.position_embedding_table = nn.Embedding(block_size, n_embd)
         self.lm_head = nn.Linear(n_embd, vocab_size)
 
     <span class="kw">def</span> <span class="fn">forward</span>(self, idx, targets=None):
+        B, T = idx.shape
         tok_emb = self.token_embedding_table(idx)
-        logits = self.lm_head(tok_emb)
+        pos_emb = self.position_embedding_table(
+            torch.arange(T, device=device))
+        x = tok_emb + pos_emb
+        logits = self.lm_head(x)
         <span class="kw">if</span> targets <span class="kw">is</span> <span class="kw">None</span>:
             <span class="kw">return</span> logits, <span class="kw">None</span>
         B, T, C = logits.shape
         loss = F.cross_entropy(logits.view(B*T, C), targets.view(B*T))
         <span class="kw">return</span> logits, loss</code></pre>
 
-    <p style="font-size:14px;">Total: <strong>~3.2 million parameters</strong>. Tiny by today's standards (GPT-4 has trillions), but enough to learn patterns!</p>
+    <p style="font-size:14px;">Total: <strong>~6.5 million parameters</strong>. Tiny by today's standards (GPT-4 has trillions), but enough to learn patterns!</p>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
@@ -784,21 +794,17 @@ Target:   " was hungry so she went looking for"</div>
     <h2>Let It Speak!</h2>
     <p>After training, our tiny model can generate text. We give it a starting word and ask: "What comes next?"</p>
 
-    <pre><code><span class="kw">def</span> <span class="fn">generate</span>(self, idx, max_new_tokens):
+    <pre><code><span class="kw">def</span> <span class="fn">generate</span>(self, idx, max_new_tokens, temperature=1.0):
     <span class="kw">for</span> _ <span class="kw">in</span> range(max_new_tokens):
         idx_cond = idx[:, -block_size:]         <span class="cm"># Only use last 8 tokens</span>
         logits, _ = self(idx_cond)               <span class="cm"># Predict</span>
-        logits = logits[:, -1, :]                <span class="cm"># Focus on last position</span>
+        logits = logits[:, -1, :] / temperature  <span class="cm"># Scale by temperature</span>
         probs = F.softmax(logits, dim=-1)        <span class="cm"># Convert to probabilities</span>
         idx_next = torch.multinomial(probs, 1)   <span class="cm"># Sample</span>
         idx = torch.cat((idx, idx_next), dim=1)  <span class="cm"># Append</span>
     <span class="kw">return</span> idx</code></pre>
 
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin:6px 0;">
-      <p style="font-size:14px;margin:0;color:#1e293b;"><strong>Prompt:</strong> "Jide was"</p>
-      <p style="font-size:14px;margin:4px 0;"><strong>Model output:</strong> <span style="color:#059669;">Jide was hungry so she went looking for food. She checked the market but it was closed. Then she found a small cafe</span></p>
-      <p style="font-size:12px;color:#64748b;margin:2px 0 0;">Your output will look different — the model samples randomly from probabilities!</p>
-    </div>
+    <p style="font-size:13px;margin:4px 0;"><strong>Temperature trick:</strong> Lower = more focused/repetitive, Higher = more creative/risky. Try <code>temperature=0.8</code>!</p>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
@@ -900,7 +906,7 @@ Target:   " was hungry so she went looking for"</div>
         <p>Saturday, July 11, 2026<br>10 AM WAT &middot; <strong>Word Embeddings</strong></p>
       </div>
       <div class="card" style="text-align:center;">
-        <h4>&#128640; Follow Me</h4>
+        <h4>&#128640; Connect with Me</h4>
         <p style="margin-bottom:4px;"><a href="https://github.com/AlexKalll" target="_blank" style="color:#1a56db;font-weight:600;">github.com/AlexKalll</a></p>
         <div style="display:inline-block;background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:4px 8px;margin-top:2px;">
           <span style="font-size:11px;color:#64748b;">&#128247; Scan QR</span>

@@ -313,7 +313,7 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
   </div>
   <nav class="nav-bar">
     <div></div>
-    <div class="slide-indicator">1 / 17</div>
+    <div class="slide-indicator">1 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -344,7 +344,7 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">2 / 17</div>
+    <div class="slide-indicator">2 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -382,7 +382,7 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">3 / 17</div>
+    <div class="slide-indicator">3 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -423,7 +423,7 @@ print(<span class="st">f"Running on: {device.upper()}"</span>)</code></pre>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">4 / 17</div>
+    <div class="slide-indicator">4 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -464,7 +464,7 @@ print(<span class="st">f"Running on: {device.upper()}"</span>)</code></pre>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">5 / 17</div>
+    <div class="slide-indicator">5 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -505,7 +505,7 @@ print(<span class="st">f"Running on: {device.upper()}"</span>)</code></pre>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">6 / 17</div>
+    <div class="slide-indicator">6 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -539,7 +539,7 @@ Then: ("c","a") → "ca"
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">7 / 17</div>
+    <div class="slide-indicator">7 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -595,7 +595,7 @@ Then: ("c","a") → "ca"
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">8 / 17</div>
+    <div class="slide-indicator">8 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -625,7 +625,7 @@ print(tokens)  <span class="cm"># → ['Farm', 'ers', 'grow', 'cass', 'ava', 'in
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">9 / 17</div>
+    <div class="slide-indicator">9 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -655,13 +655,49 @@ print(enc.decode([data[0].item()]))  <span class="cm"># → "Jide"</span></code>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">10 / 17</div>
+    <div class="slide-indicator">10 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 11 — SLIDING WINDOW ===== -->
+<!-- ===== SLIDE 11 — EMBEDDINGS OVERVIEW ===== -->
 <section class="slide" data-slide="11">
+  <div class="slide-content">
+    <h2>Embeddings: Words as Vectors</h2>
+    <p>A number alone (token ID) has no meaning — "397" and "401" don't tell us the words are related. Embeddings fix this by mapping each token to a <strong>vector of numbers</strong> where similar words live close together.</p>
+
+    <div class="card-grid">
+      <div class="card">
+        <h4>Token ID → Vector</h4>
+        <p>Each token gets its own <em>embedding</em> — a list of, say, 32 numbers. Think of it as a <strong>coordinate in meaning-space</strong>.</p>
+      </div>
+      <div class="card">
+        <h4>Similar → Nearby</h4>
+        <p>"cat" and "dog" have similar vectors (both pets). "king" is close to "queen" but far from "apple". The model learns these relationships.</p>
+      </div>
+      <div class="card">
+        <h4>Learned During Training</h4>
+        <p>Embeddings start as random noise. As the model trains, it pushes/pulls words closer or farther apart to capture meaning.</p>
+      </div>
+    </div>
+
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin:6px 0;">
+      <pre style="margin:0;font-size:13px;">Embedding for <strong>"king"</strong> → [0.23, -1.45, 0.67, ..., 0.12]  (32 numbers)
+Embedding for <strong>"queen"</strong> → [0.25, -1.40, 0.62, ..., 0.15]  (very similar!)
+Embedding for <strong>"apple"</strong> → [-0.98, 2.10, -0.33, ..., 0.88]  (very different)</pre>
+    </div>
+
+    <p style="font-size:13px;">We'll explore embeddings in depth on <strong>Saturday</strong> — including how to visualize them with t-SNE and measure similarity with cosine distance!</p>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">11 / 18</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 12 — SLIDING WINDOW ===== -->
+<section class="slide" data-slide="12">
   <div class="slide-content">
     <h2>Creating Training Data: The Sliding Window</h2>
     <p>A language model's only job: <strong>predict the next token</strong>. We create flashcards: "Given these tokens, what comes next?"</p>
@@ -689,7 +725,7 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">11 / 17</div>
+    <div class="slide-indicator">12 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -742,12 +778,12 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">12 / 17</div>
+    <div class="slide-indicator">13 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 13 — TRAINING LOOP ===== -->
+<!-- ===== SLIDE 14 — TRAINING LOOP ===== -->
 <section class="slide" data-slide="13">
   <div class="slide-content">
     <h2>Training: Becoming Less Wrong</h2>
@@ -783,7 +819,7 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">13 / 17</div>
+    <div class="slide-indicator">14 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -808,7 +844,7 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">14 / 17</div>
+    <div class="slide-indicator">15 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -844,7 +880,7 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">15 / 17</div>
+    <div class="slide-indicator">16 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -879,7 +915,7 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">16 / 17</div>
+    <div class="slide-indicator">17 / 18</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -920,7 +956,7 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">17 / 17</div>
+    <div class="slide-indicator">18 / 18</div>
     <button class="nav-btn primary" onclick="goToSlide(1)">&#9650; Start Over</button>
   </nav>
 </section>

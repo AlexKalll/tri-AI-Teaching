@@ -45,7 +45,7 @@ body {
 .slide-content {
   position: absolute;
   top: 22%;
-  bottom: 10%;
+  bottom: 12%;
   left: 7%;
   right: 7%;
   overflow-y: auto;
@@ -191,22 +191,28 @@ body {
 .timeline .seg.wrap { background: #059669; flex: 1.5; }
 
 .nav-bar {
-  position: absolute;
-  bottom: 1%;
-  left: 7%;
-  right: 7%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2px 4px;
+  padding: 8px 16px;
+  background: rgba(255,255,255,0.92);
+  border-top: 1px solid #e2e8f0;
+  z-index: 50;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
 }
 .nav-btn {
   background: rgba(255,255,255,0.85);
   border: 1px solid #cbd5e1;
   border-radius: 6px;
-  padding: 4px 14px;
-  font-size: 13px;
-  font-weight: 500;
+  padding: 10px 20px;
+  min-height: 44px;
+  font-size: 15px;
+  font-weight: 600;
   color: #334155;
   cursor: pointer;
   transition: all 0.15s;
@@ -288,10 +294,12 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
 .diagram .bl { color: #1d4ed8; font-weight: 600; }
 
 @media (max-width: 900px) {
-  .slide-content { top: 16%; bottom: 11%; left: 5%; right: 5%; }
+  .slide-content { top: 14%; bottom: 16%; left: 5%; right: 5%; }
   .slide-content h1 { font-size: 28px; }
   .slide-content h2 { font-size: 20px; }
   .slide.title-slide .title-main { font-size: 30px; }
+  .nav-btn { padding: 12px 22px; font-size: 16px; }
+  .slide-indicator { font-size: 13px; }
 }
 </style>
 </head>
@@ -1001,6 +1009,19 @@ Target:   " was hungry so she went looking for"</div>
       e.preventDefault(); goToSlide(totalSlides);
     }
   });
+
+  // Touch swipe: swipe left = next, swipe right = back (mobile friendly)
+  var touchStartX = 0;
+  document.addEventListener('touchstart', function(e) {
+    if (e.changedTouches.length) touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+  document.addEventListener('touchend', function(e) {
+    if (!e.changedTouches.length) return;
+    var dx = e.changedTouches[0].screenX - touchStartX;
+    if (Math.abs(dx) > 50) {
+      if (dx < 0) nextSlide(); else prevSlide();
+    }
+  }, { passive: true });
 
   updateSlide(1);
 })();

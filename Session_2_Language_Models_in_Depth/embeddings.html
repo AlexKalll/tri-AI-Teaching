@@ -266,8 +266,22 @@ body {
   border: 1px solid #a7f3d0;
   border-radius: 6px;
   color: #065f46;
+  display: none;
 }
 .question .q-answer b { color: #047857; }
+.q-show-btn {
+  margin-top: 6px;
+  background: #1a56db;
+  border: 1px solid #1a56db;
+  color: #fff;
+  border-radius: 6px;
+  padding: 4px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.q-show-btn:hover { background: #1e40af; }
 
 /* Table */
 .table-wrap { overflow-x: auto; margin: 4px 0; }
@@ -395,6 +409,7 @@ Embedding for <strong>"apple"</strong> → [-0.98, 2.10, -0.33, ..., 0.88]  (ver
         <li><b>C)</b> A programming language used to train models</li>
         <li><b>D)</b> The raw text before it is cleaned</li>
       </ul>
+            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
       <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; An embedding is the vector of numbers a model uses to represent a word's meaning.</div>
     </div>
   </div>
@@ -451,6 +466,7 @@ col_7  = embeddings[:, 6]   <span class="cm"># 7th number across all words</span
         <li><b>C)</b> The embedding (vector) of a single word</li>
         <li><b>D)</b> A single training sentence</li>
       </ul>
+            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
       <div class="q-answer"><b>&#10003; Answer: C</b> &mdash; Each row is one word's full vector of numbers.</div>
     </div>
   </div>
@@ -490,6 +506,7 @@ col_7  = embeddings[:, 6]   <span class="cm"># 7th number across all words</span
         <li><b>C)</b> They appear the same number of times in the data</li>
         <li><b>D)</b> The embeddings are broken</li>
       </ul>
+            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
       <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; Similar embeddings mean the model treats the words as semantically related.</div>
     </div>
   </div>
@@ -539,6 +556,7 @@ col_7  = embeddings[:, 6]   <span class="cm"># 7th number across all words</span
         <li><b>C)</b> Unrelated (at a right angle in the space)</li>
         <li><b>D)</b> Both very common words</li>
       </ul>
+            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
       <div class="q-answer"><b>&#10003; Answer: C</b> &mdash; A zero dot product means the vectors are orthogonal, i.e. unrelated.</div>
     </div>
   </div>
@@ -581,6 +599,7 @@ col_7  = embeddings[:, 6]   <span class="cm"># 7th number across all words</span
         <li><b>C)</b> Opposites</li>
         <li><b>D)</b> The same word</li>
       </ul>
+            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
       <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; A value near 0 means the words are essentially unrelated.</div>
     </div>
   </div>
@@ -627,6 +646,7 @@ emb.plot_embeddings_dimensions(embeddings, labels,
         <li><b>C)</b> Embeddings have no real meaning</li>
         <li><b>D)</b> The computer is too slow to show one number</li>
       </ul>
+            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
       <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; A word's meaning is spread across the entire vector, not stored in one slot.</div>
     </div>
   </div>
@@ -671,6 +691,7 @@ emb.plot_embeddings_dimensions(embeddings, labels,
         <li><b>C)</b> To delete rare words</li>
         <li><b>D)</b> To speed up training</li>
       </ul>
+            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
       <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; t-SNE reduces dimensions for visualization while preserving neighborhoods.</div>
     </div>
   </div>
@@ -710,7 +731,7 @@ emb.plot_embeddings_dimensions(embeddings, labels,
         <li><b>C)</b> "apple" &amp; "computer"</li>
         <li><b>D)</b> "water" &amp; "mountain"</li>
       </ul>
-      <div class="q-answer"><b>&#10003; Answer: A</b> &mdash; "king" and "queen" are semantically closest, so their vectors point most alike.</div>
+      
     </div>
   </div>
   <nav class="nav-bar">
@@ -776,6 +797,18 @@ emb.plot_embeddings_dimensions(embeddings, labels,
     indicators.forEach(function(el) { el.textContent = index + ' / ' + totalSlides; });
     window.scrollTo({ top: 0 });
   }
+
+  window.toggleAnswer = function(btn) {
+    var ans = btn.nextElementSibling;
+    if (!ans) return;
+    if (ans.style.display === 'block') {
+      ans.style.display = 'none';
+      btn.textContent = 'Show Answer';
+    } else {
+      ans.style.display = 'block';
+      btn.textContent = 'Hide Answer';
+    }
+  };
 
   window.nextSlide = function() { if (current < totalSlides) updateSlide(current + 1); };
   window.prevSlide = function() { if (current > 1) updateSlide(current - 1); };

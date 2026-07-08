@@ -170,6 +170,19 @@ body {
 
 .v-arrow { color: #ea580c; font-size: 18px; font-weight: 700; }
 
+.resource-link {
+  display: inline-block;
+  margin: 4px 6px 4px 0;
+  padding: 6px 14px;
+  background: #1a56db;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.resource-link:hover { background: #1e40af; }
+
 .nav-bar {
   position: absolute;
   bottom: 1%;
@@ -208,7 +221,7 @@ body {
   align-items: center;
   text-align: center;
 }
-.slide.title-slide .title-main {font-weight: bolder; font-size: 90px; color: #1a56db; margin-bottom: 30px; }
+.slide.title-slide .title-main { font-size: 44px; color: #1a56db; margin-bottom: 6px; }
 .slide.title-slide .title-sub { font-size: 18px; color: #475569; margin-bottom: 12px; }
 .slide.title-slide .title-badges { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin: 4px 0; }
 .slide.title-slide .badge {
@@ -229,7 +242,20 @@ body {
   padding: 8px 14px;
   margin: 7px 0;
 }
-.question .q-label {
+.q-toggle-btn {
+  background: #f59e0b;
+  border: 1px solid #f59e0b;
+  color: #fff;
+  border-radius: 6px;
+  padding: 5px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.q-toggle-btn:hover { background: #d97706; }
+.q-body { margin-top: 8px; }
+.q-label {
   font-size: 11px;
   font-weight: 700;
   color: #b45309;
@@ -237,18 +263,18 @@ body {
   letter-spacing: 0.6px;
   margin-bottom: 3px;
 }
-.question .q-text {
+.q-text {
   font-size: 14px;
   color: #1e293b;
   margin-bottom: 6px;
   font-weight: 600;
 }
-.question .q-options {
+.q-options {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-.question .q-options li {
+.q-options li {
   font-size: 13px;
   padding: 4px 10px;
   margin-bottom: 3px;
@@ -257,18 +283,7 @@ body {
   border-radius: 6px;
   color: #334155;
 }
-.question .q-options li b { color: #1a56db; }
-.question .q-answer {
-  font-size: 12px;
-  margin-top: 6px;
-  padding: 4px 10px;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  border-radius: 6px;
-  color: #065f46;
-  display: none;
-}
-.question .q-answer b { color: #047857; }
+.q-options li b { color: #1a56db; }
 .q-show-btn {
   margin-top: 6px;
   background: #1a56db;
@@ -282,6 +297,17 @@ body {
   cursor: pointer;
 }
 .q-show-btn:hover { background: #1e40af; }
+.q-answer {
+  font-size: 12px;
+  margin-top: 6px;
+  padding: 4px 10px;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: 6px;
+  color: #065f46;
+  display: none;
+}
+.q-answer b { color: #047857; }
 
 /* Table */
 .table-wrap { overflow-x: auto; margin: 4px 0; }
@@ -342,6 +368,13 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
 .space-diagram .pt.tech { background: #dbeafe; color: #1d4ed8; border: 1px solid #93c5fd; }
 .space-diagram .pt.far { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
 
+.dive-line {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1a56db;
+  margin: 10px 0 4px;
+}
+
 @media (max-width: 900px) {
   .slide-content { top: 16%; bottom: 11%; left: 5%; right: 5%; }
   .slide-content h1 { font-size: 28px; }
@@ -357,7 +390,7 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
 <!-- ===== SLIDE 1 — TITLE ===== -->
 <section class="slide title-slide active" data-slide="1">
   <div class="slide-content">
-    <div class="title-main">Embeddings</div>
+    <div class="title-main">Experiment with<br>Embeddings</div>
     <div class="title-sub">TRI AI Saturdays &middot; Cohort 10 &middot; Deep Dive Session</div>
     <div style="font-size:15px;color:#475569;margin-bottom:10px;">Saturday, July 11, 2026 &middot; Live Lab &amp; Discussion</div>
     <div class="title-badges">
@@ -365,6 +398,7 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
       <span class="badge">&#9670; Instructor: Kaletsidik Ayalew</span>
     </div>
     <div style="margin-top:20px;font-size:13px;color:#64748b;">How do language models turn words into numbers &mdash; and why do similar words end up close together?</div>
+    <div style="margin-top:14px;"><a class="resource-link" href="resources.html">&#128218; Session Resources</a></div>
   </div>
   <nav class="nav-bar">
     <div></div>
@@ -401,16 +435,19 @@ Embedding for <strong>"apple"</strong> → [-0.98, 2.10, -0.33, ..., 0.88]  (ver
     </div>
 
     <div class="question">
-      <div class="q-label">&#10067; Check your understanding</div>
-      <div class="q-text">What is a word embedding?</div>
-      <ul class="q-options">
-        <li><b>A)</b> A table that stores all the sentences a model has read</li>
-        <li><b>B)</b> A long list of numbers that represents a word's meaning</li>
-        <li><b>C)</b> A programming language used to train models</li>
-        <li><b>D)</b> The raw text before it is cleaned</li>
-      </ul>
-            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
-      <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; An embedding is the vector of numbers a model uses to represent a word's meaning.</div>
+      <button class="q-toggle-btn" onclick="toggleQuestion(this)">Show Question</button>
+      <div class="q-body" style="display:none;">
+        <div class="q-label">&#10067; Check your understanding</div>
+        <div class="q-text">What is a word embedding?</div>
+        <ul class="q-options">
+          <li><b>A)</b> A table that stores all the sentences a model has read</li>
+          <li><b>B)</b> A long list of numbers that represents a word's meaning</li>
+          <li><b>C)</b> A programming language used to train models</li>
+          <li><b>D)</b> The raw text before it is cleaned</li>
+        </ul>
+        <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; An embedding is the vector of numbers a model uses to represent a word's meaning.</div>
+      </div>
     </div>
   </div>
   <nav class="nav-bar">
@@ -458,16 +495,19 @@ col_7  = embeddings[:, 6]   <span class="cm"># 7th number across all words</span
     <p style="font-size:13px;">The whole embedding table is just a big matrix: <strong>rows = words, columns = meaning-coordinates</strong>.</p>
 
     <div class="question">
-      <div class="q-label">&#10067; Check your understanding</div>
-      <div class="q-text">In the embedding matrix, what does one <em>row</em> represent?</div>
-      <ul class="q-options">
-        <li><b>A)</b> One meaning-coordinate shared by all words</li>
-        <li><b>B)</b> The entire model</li>
-        <li><b>C)</b> The embedding (vector) of a single word</li>
-        <li><b>D)</b> A single training sentence</li>
-      </ul>
-            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
-      <div class="q-answer"><b>&#10003; Answer: C</b> &mdash; Each row is one word's full vector of numbers.</div>
+      <button class="q-toggle-btn" onclick="toggleQuestion(this)">Show Question</button>
+      <div class="q-body" style="display:none;">
+        <div class="q-label">&#10067; Check your understanding</div>
+        <div class="q-text">In the embedding matrix, what does one <em>row</em> represent?</div>
+        <ul class="q-options">
+          <li><b>A)</b> One meaning-coordinate shared by all words</li>
+          <li><b>B)</b> The entire model</li>
+          <li><b>C)</b> The embedding (vector) of a single word</li>
+          <li><b>D)</b> A single training sentence</li>
+        </ul>
+        <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="q-answer"><b>&#10003; Answer: C</b> &mdash; Each row is one word's full vector of numbers.</div>
+      </div>
     </div>
   </div>
   <nav class="nav-bar">
@@ -498,16 +538,19 @@ col_7  = embeddings[:, 6]   <span class="cm"># 7th number across all words</span
     <p>This is why a model can <strong>guess meaning</strong> even for words it has rarely seen &mdash; their vectors land near related words it already knows.</p>
 
     <div class="question">
-      <div class="q-label">&#10067; Check your understanding</div>
-      <div class="q-text">If "cat" and "dog" have very similar embeddings, what does that tell us?</div>
-      <ul class="q-options">
-        <li><b>A)</b> They are spelled the same way</li>
-        <li><b>B)</b> The model thinks they are related in meaning</li>
-        <li><b>C)</b> They appear the same number of times in the data</li>
-        <li><b>D)</b> The embeddings are broken</li>
-      </ul>
-            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
-      <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; Similar embeddings mean the model treats the words as semantically related.</div>
+      <button class="q-toggle-btn" onclick="toggleQuestion(this)">Show Question</button>
+      <div class="q-body" style="display:none;">
+        <div class="q-label">&#10067; Check your understanding</div>
+        <div class="q-text">If "cat" and "dog" have very similar embeddings, what does that tell us?</div>
+        <ul class="q-options">
+          <li><b>A)</b> They are spelled the same way</li>
+          <li><b>B)</b> The model thinks they are related in meaning</li>
+          <li><b>C)</b> They appear the same number of times in the data</li>
+          <li><b>D)</b> The embeddings are broken</li>
+        </ul>
+        <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; Similar embeddings mean the model treats the words as semantically related.</div>
+      </div>
     </div>
   </div>
   <nav class="nav-bar">
@@ -548,16 +591,19 @@ col_7  = embeddings[:, 6]   <span class="cm"># 7th number across all words</span
     <p style="font-size:13px;">A dot product can grow very large in high dimensions, so we usually <strong>normalize</strong> it &mdash; that leads us to cosine similarity.</p>
 
     <div class="question">
-      <div class="q-label">&#10067; Check your understanding</div>
-      <div class="q-text">A dot product of <strong>0</strong> between two word embeddings means the words are&hellip;</div>
-      <ul class="q-options">
-        <li><b>A)</b> Exactly the same word</li>
-        <li><b>B)</b> Opposites in meaning</li>
-        <li><b>C)</b> Unrelated (at a right angle in the space)</li>
-        <li><b>D)</b> Both very common words</li>
-      </ul>
-            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
-      <div class="q-answer"><b>&#10003; Answer: C</b> &mdash; A zero dot product means the vectors are orthogonal, i.e. unrelated.</div>
+      <button class="q-toggle-btn" onclick="toggleQuestion(this)">Show Question</button>
+      <div class="q-body" style="display:none;">
+        <div class="q-label">&#10067; Check your understanding</div>
+        <div class="q-text">A dot product of <strong>0</strong> between two word embeddings means the words are&hellip;</div>
+        <ul class="q-options">
+          <li><b>A)</b> Exactly the same word</li>
+          <li><b>B)</b> Opposites in meaning</li>
+          <li><b>C)</b> Unrelated (at a right angle in the space)</li>
+          <li><b>D)</b> Both very common words</li>
+        </ul>
+        <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="q-answer"><b>&#10003; Answer: C</b> &mdash; A zero dot product means the vectors are orthogonal, i.e. unrelated.</div>
+      </div>
     </div>
   </div>
   <nav class="nav-bar">
@@ -591,16 +637,19 @@ col_7  = embeddings[:, 6]   <span class="cm"># 7th number across all words</span
     <p style="font-size:13px;"><strong>+1</strong> = same direction, <strong>0</strong> = unrelated, <strong>-1</strong> = opposite. Notice even antonyms like "sad/happy" score above 0 &mdash; they are still both <em>feelings</em>, so the model groups them loosely.</p>
 
     <div class="question">
-      <div class="q-label">&#10067; Check your understanding</div>
-      <div class="q-text">"king" and "bus" have a cosine similarity of <strong>0.04</strong>. This means they are&hellip;</div>
-      <ul class="q-options">
-        <li><b>A)</b> Synonyms</li>
-        <li><b>B)</b> Unrelated</li>
-        <li><b>C)</b> Opposites</li>
-        <li><b>D)</b> The same word</li>
-      </ul>
-            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
-      <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; A value near 0 means the words are essentially unrelated.</div>
+      <button class="q-toggle-btn" onclick="toggleQuestion(this)">Show Question</button>
+      <div class="q-body" style="display:none;">
+        <div class="q-label">&#10067; Check your understanding</div>
+        <div class="q-text">"king" and "bus" have a cosine similarity of <strong>0.04</strong>. This means they are&hellip;</div>
+        <ul class="q-options">
+          <li><b>A)</b> Synonyms</li>
+          <li><b>B)</b> Unrelated</li>
+          <li><b>C)</b> Opposites</li>
+          <li><b>D)</b> The same word</li>
+        </ul>
+        <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; A value near 0 means the words are essentially unrelated.</div>
+      </div>
     </div>
   </div>
   <nav class="nav-bar">
@@ -638,16 +687,19 @@ emb.plot_embeddings_dimensions(embeddings, labels,
     <p style="font-size:13px;">Try different pairs &mdash; you will rarely find a single pair that cleanly separates "food" from "technology". That is normal!</p>
 
     <div class="question">
-      <div class="q-label">&#10067; Check your understanding</div>
-      <div class="q-text">Why can't we understand an embedding by looking at just one of its numbers?</div>
-      <ul class="q-options">
-        <li><b>A)</b> The numbers are randomly generated every time</li>
-        <li><b>B)</b> Meaning comes from the combination of <em>all</em> the numbers together</li>
-        <li><b>C)</b> Embeddings have no real meaning</li>
-        <li><b>D)</b> The computer is too slow to show one number</li>
-      </ul>
-            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
-      <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; A word's meaning is spread across the entire vector, not stored in one slot.</div>
+      <button class="q-toggle-btn" onclick="toggleQuestion(this)">Show Question</button>
+      <div class="q-body" style="display:none;">
+        <div class="q-label">&#10067; Check your understanding</div>
+        <div class="q-text">Why can't we understand an embedding by looking at just one of its numbers?</div>
+        <ul class="q-options">
+          <li><b>A)</b> The numbers are randomly generated every time</li>
+          <li><b>B)</b> Meaning comes from the combination of <em>all</em> the numbers together</li>
+          <li><b>C)</b> Embeddings have no real meaning</li>
+          <li><b>D)</b> The computer is too slow to show one number</li>
+        </ul>
+        <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; A word's meaning is spread across the entire vector, not stored in one slot.</div>
+      </div>
     </div>
   </div>
   <nav class="nav-bar">
@@ -683,16 +735,19 @@ emb.plot_embeddings_dimensions(embeddings, labels,
     <p style="font-size:13px;">t-SNE is a <strong>viewing tool</strong>, not the model itself. It helps us <em>see</em> and debug what the embeddings learned.</p>
 
     <div class="question">
-      <div class="q-label">&#10067; Check your understanding</div>
-      <div class="q-text">What is the main job of t-SNE in this lab?</div>
-      <ul class="q-options">
-        <li><b>A)</b> To make the embeddings bigger</li>
-        <li><b>B)</b> To project high-dimensional embeddings into 2D so we can see clusters</li>
-        <li><b>C)</b> To delete rare words</li>
-        <li><b>D)</b> To speed up training</li>
-      </ul>
-            <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
-      <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; t-SNE reduces dimensions for visualization while preserving neighborhoods.</div>
+      <button class="q-toggle-btn" onclick="toggleQuestion(this)">Show Question</button>
+      <div class="q-body" style="display:none;">
+        <div class="q-label">&#10067; Check your understanding</div>
+        <div class="q-text">What is the main job of t-SNE in this lab?</div>
+        <ul class="q-options">
+          <li><b>A)</b> To make the embeddings bigger</li>
+          <li><b>B)</b> To project high-dimensional embeddings into 2D so we can see clusters</li>
+          <li><b>C)</b> To delete rare words</li>
+          <li><b>D)</b> To speed up training</li>
+        </ul>
+        <button class="q-show-btn" onclick="toggleAnswer(this)">Show Answer</button>
+        <div class="q-answer"><b>&#10003; Answer: B</b> &mdash; t-SNE reduces dimensions for visualization while preserving neighborhoods.</div>
+      </div>
     </div>
   </div>
   <nav class="nav-bar">
@@ -716,23 +771,28 @@ emb.plot_embeddings_dimensions(embeddings, labels,
     </ul>
 
     <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 14px;margin:8px 0;">
-      <p style="font-size:13px;margin:0;"><strong>Notebook:</strong> <code>gdm_lab_2_5_experiment_with_embeddings.py</code> (in this session's <code>resources/</code> folder, adapted from Google DeepMind's AI Foundations course).</p>
-      <p style="font-size:13px;margin:4px 0 0;">Open the original on Colab: <code>google-deepmind/ai-foundations &middot; course_2</code></p>
+      <p style="font-size:13px;margin:0;"><strong>&#128187; Notebook:</strong> <a href="https://colab.research.google.com/drive/139sbOlJguvJ21GfQqCEk_EwvrymtTNd1?usp=sharing" target="_blank" rel="noopener">Open the Embeddings Lab notebook in Colab</a></p>
+      <p style="font-size:13px;margin:4px 0 0;">Original source: Google DeepMind &middot; AI Foundations &middot; course_2</p>
     </div>
 
     <p style="font-size:13px;">No answers are hidden &mdash; run the cells, change the words, and <strong>discuss what you see</strong>. That is where the learning happens!</p>
 
     <div class="question">
-      <div class="q-label">&#10067; Quick discussion</div>
-      <div class="q-text">Which pair do you <em>predict</em> will have the highest cosine similarity?</div>
-      <ul class="q-options">
-        <li><b>A)</b> "king" &amp; "queen"</li>
-        <li><b>B)</b> "king" &amp; "bus"</li>
-        <li><b>C)</b> "apple" &amp; "computer"</li>
-        <li><b>D)</b> "water" &amp; "mountain"</li>
-      </ul>
-      
+      <button class="q-toggle-btn" onclick="toggleQuestion(this)">Show Question</button>
+      <div class="q-body" style="display:none;">
+        <div class="q-label">&#10067; Quick discussion</div>
+        <div class="q-text">Which pair do you <em>predict</em> will have the highest cosine similarity?</div>
+        <ul class="q-options">
+          <li><b>A)</b> "king" &amp; "queen"</li>
+          <li><b>B)</b> "king" &amp; "bus"</li>
+          <li><b>C)</b> "apple" &amp; "computer"</li>
+          <li><b>D)</b> "water" &amp; "mountain"</li>
+        </ul>
+      </div>
     </div>
+
+    <p class="dive-line">Let's Dive into the Lab and Practice Some coding. &#128187;&#128293;</p>
+    <div><a class="resource-link" href="resources.html">&#128218; All Session Resources</a></div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
@@ -763,8 +823,8 @@ emb.plot_embeddings_dimensions(embeddings, labels,
     <p style="font-size:14px;">Today you <strong>experimented</strong> with real embeddings &mdash; the same idea that powers the "meaning" inside every language model, including the tiny SLM we built on Wednesday.</p>
 
     <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px;margin:8px 0;">
-      <p style="font-size:13px;margin:0;"><strong>Resources:</strong></p>
-      <p style="font-size:13px;margin:3px 0 0;">&bull; Notebook: <code>resources/gdm_lab_2_5_experiment_with_embeddings.py</code></p>
+      <p style="font-size:13px;margin:0;"><strong>Resources:</strong> <a class="resource-link" href="resources.html" style="margin-left:4px;">&#128218; Open the Resources page</a></p>
+      <p style="font-size:13px;margin:6px 0 0;">&bull; Notebook: <a href="https://colab.research.google.com/drive/139sbOlJguvJ21GfQqCEk_EwvrymtTNd1?usp=sharing" target="_blank" rel="noopener">Embeddings Lab (Colab)</a></p>
       <p style="font-size:13px;margin:2px 0 0;">&bull; Repo: <code>github.com/AlexKalll/tri-AI-Teaching</code></p>
       <p style="font-size:13px;margin:2px 0 0;">&bull; Instructor: Kaletsidik Ayalew &middot; <code>github.com/AlexKalll</code></p>
     </div>
@@ -797,6 +857,18 @@ emb.plot_embeddings_dimensions(embeddings, labels,
     indicators.forEach(function(el) { el.textContent = index + ' / ' + totalSlides; });
     window.scrollTo({ top: 0 });
   }
+
+  window.toggleQuestion = function(btn) {
+    var body = btn.nextElementSibling;
+    if (!body) return;
+    if (body.style.display === 'block') {
+      body.style.display = 'none';
+      btn.textContent = 'Show Question';
+    } else {
+      body.style.display = 'block';
+      btn.textContent = 'Hide Question';
+    }
+  };
 
   window.toggleAnswer = function(btn) {
     var ans = btn.nextElementSibling;

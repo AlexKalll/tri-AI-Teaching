@@ -29,7 +29,8 @@ jobs:
           cp -r Session_1_Train_SLM_from_Scratch/* _site/
           # Session 2 -> Saturday deck (embeddings.html at root, keep its resources image)
           cp Session_2_Language_Models_in_Depth/embeddings.html _site/
-          cp Session_2_Language_Models_in_Depth/resources.html _site/
+          # Deploy under a distinct name so it does not overwrite Session 1's resources.html
+          cp Session_2_Language_Models_in_Depth/resources.html _site/embeddings-resources.html
           cp -r Session_2_Language_Models_in_Depth/resources/* _site/resources/
           cp README.md _site/
 

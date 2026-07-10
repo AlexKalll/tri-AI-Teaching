@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRI AI Saturdays — Session Resources</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', 'Inter', -apple-system, Roboto, sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
+  min-height: 100vh;
+}
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+}
+.back {
+  display: inline-block;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: #1a56db;
+  text-decoration: none;
+  font-weight: 600;
+}
+.back:hover { text-decoration: underline; }
+h1 { color: #1a56db; font-size: 30px; margin-bottom: 6px; }
+.sub { color: #475569; font-size: 15px; margin-bottom: 22px; }
+.card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #1a56db;
+  border-radius: 10px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.card h3 { font-size: 16px; color: #1a56db; margin-bottom: 6px; }
+.card p { font-size: 14px; line-height: 1.55; margin-bottom: 8px; color: #334155; }
+.card a.res-link {
+  display: inline-block;
+  margin: 4px 8px 4px 0;
+  padding: 8px 16px;
+  background: #1a56db;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.card a.res-link:hover { background: #1e40af; }
+.card a.res-link.alt { background: #059669; }
+.card a.res-link.alt:hover { background: #047857; }
+code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 13px; color: #b45309; border: 1px solid #e2e8f0; }
+.foot { margin-top: 24px; font-size: 13px; color: #64748b; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="back" href="slides.html">&larr; Back to the slides</a>
+  <h1>Session Resources</h1>
+  <p class="sub">Train Your First Small Language Model &mdash; TRI AI Saturdays, Cohort 10</p>
+
+  <div class="card">
+    <h3>&#128187; Main Notebook (Colab)</h3>
+    <p>The hands-on lab you used in class: tokenize text, build the transformer, and train your own tiny SLM.</p>
+    <a class="res-link" href="https://colab.research.google.com/drive/1c9WsoHVA9ZBa-Par39fHBghyg3FngQ4B?usp=sharing" target="_blank" rel="noopener">Open the SLM Lab notebook in Colab</a>
+  </div>
+
+  <div class="card">
+    <h3>&#128214; Original Source Notebook</h3>
+    <p>The original notebook this session is adapted from &mdash; handy for comparing and extra experiments.</p>
+    <a class="res-link" href="https://colab.research.google.com/drive/1RIUU_cZeR5yQWQMIUOleRfkwaOgaYOJM?usp=sharing" target="_blank" rel="noopener">Open the original Colab notebook</a>
+  </div>
+
+  <div class="card">
+    <h3>&#127891; Slides</h3>
+    <p>The full presentation used in the session.</p>
+    <a class="res-link alt" href="slides.html">View the slides</a>
+  </div>
+
+  <div class="card">
+    <h3>&#128218; Key Concepts</h3>
+    <p>What you explored today:</p>
+    <p>&bull; <strong>Tokenization (BPE):</strong> how text becomes tokens.<br>
+       &bull; <strong>Embeddings:</strong> each word becomes a vector &mdash; the heart of the model.<br>
+       &bull; <strong>Attention &amp; transformer blocks:</strong> how context flows.<br>
+       &bull; <strong>Training:</strong> learning better embeddings to predict the next token.<br>
+       &bull; <strong>Scale:</strong> the same recipe at larger size reaches <strong>12,937,781 parameters</strong>.</p>
+  </div>
+
+  <div class="card">
+    <h3>&#128640; Code &amp; Connect</h3>
+    <p>All session materials live in the course repository.</p>
+    <p><strong>Repo:</strong> <a href="https://github.com/AlexKalll/tri-AI-Teaching" target="_blank" rel="noopener" style="color:#1a56db;">github.com/AlexKalll/tri-AI-Teaching</a></p>
+    <p><strong>Instructor:</strong> Kaletsidik Ayalew &middot; <a href="https://github.com/AlexKalll" target="_blank" rel="noopener" style="color:#1a56db;">github.com/AlexKalll</a> &middot; <a href="https://www.linkedin.com/in/kaletsidik-ayalew/" target="_blank" rel="noopener" style="color:#1a56db;">LinkedIn</a></p>
+  </div>
+
+  <div class="card">
+    <h3>&#127918; Live Playgrounds</h3>
+    <p>Try these interactive tools to build intuition before/after the lab.</p>
+    <a class="res-link" href="https://huggingface.co/spaces/Xenova/the-tokenizer-playground" target="_blank" rel="noopener">Tokenizer Playground</a>
+    <a class="res-link alt" href="https://word-embeddings.wbkolleg.unibe.ch/" target="_blank" rel="noopener">Word Embedding Playground</a>
+    <a class="res-link" href="https://embed.sheth.io/" target="_blank" rel="noopener">Embedding Visualizer</a>
+  </div>
+
+  <p class="foot">In partnership with Google DeepMind &middot; TRI AI Saturdays, Cohort 10</p>
+</div>
+</body>
+</html>

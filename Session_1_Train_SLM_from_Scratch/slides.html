@@ -355,12 +355,11 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
       <span class="badge">&#9670; In partnership with Google DeepMind</span>
       <span class="badge">&#9670; Instructor: Kaletsidik Ayalew</span>
     </div>
-    <div style="margin-top:14px;font-size:14px;color:#475569;"><strong>Software Engineer</strong> &middot; AI &middot; ML &middot; Data Science</div>
     <div style="margin-top:20px;font-size:13px;color:#64748b;">From text to tokens to a tiny brain — all in one session</div>
   </div>
   <nav class="nav-bar">
     <div></div>
-    <div class="slide-indicator">1 / 19</div>
+    <div class="slide-indicator">1 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -387,7 +386,7 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">2 / 19</div>
+    <div class="slide-indicator">2 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
@@ -400,22 +399,51 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">3 / 19</div>
+    <div class="slide-indicator">3 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
 
-<!-- ===== (About slide removed: short bio now on title + final slide) ===== -->
-
-<!-- ===== SLIDE 3 — LAB OVERVIEW ===== -->
+<!-- ===== SLIDE 4 — ABOUT ME ===== -->
 <section class="slide" data-slide="4">
+  <div class="slide-content">
+    <h2>About Your Instructor</h2>
+    <div class="about-row">
+      <div class="about-avatar">K</div>
+      <div>
+        <h3 style="margin:0 0 4px;font-size:22px;">Kaletsidik Ayalew</h3>
+        <p style="font-size:16px;color:#ea580c;margin-bottom:6px;">AI/ML Engineer &amp; Data Scientist</p>
+        <p style="font-size:14px;">Building AI solutions that bridge cutting-edge research with real-world impact. Passionate about making deep learning accessible to everyone.</p>
+        <p style="font-size:13px;margin-top:4px;">&#128279; <a href="https://github.com/AlexKalll/tri-AI-Teaching" target="_blank" style="color:#1a56db;">GitHub Repository of the Session</a></p>
+      </div>
+    </div>
+    <div class="card-grid" style="margin-top:6px;">
+      <div class="card">
+        <h4>&#128187; What I Do</h4>
+        <p>Design and deploy ML models for production — NLP, computer vision, and beyond.</p>
+      </div>
+      <div class="card">
+        <h4>&#127891; Why This Lab</h4>
+        <p>Understanding tokenization is the foundation of everything in modern AI. Let's build it together.</p>
+      </div>
+    </div>
+  </div>
+  <nav class="nav-bar">
+    <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
+    <div class="slide-indicator">4 / 20</div>
+    <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
+  </nav>
+</section>
+
+<!-- ===== SLIDE 5 — LAB OVERVIEW ===== -->
+<section class="slide" data-slide="5">
   <div class="slide-content">
     <h2>What We'll Build in 2 Hours</h2>
     <div class="timeline">
       <div class="seg setup"><span class="label"></span>Setup</div>
       <div class="seg theory"><span class="label"></span>BPE</div>
-      <div class="seg coding"><span class="label"></span>Coding Lab</div>
+      <div class="seg coding"><span class="label"></span>Building</div>
       <div class="seg analysis"><span class="label"></span>SLM</div>
       <div class="seg wrap"><span class="label"></span>Wrap</div>
     </div>
@@ -441,13 +469,13 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">4 / 19</div>
+    <div class="slide-indicator">5 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 4 — SETUP ===== -->
-<section class="slide" data-slide="5">
+<!-- ===== SLIDE 6 — SETUP ===== -->
+<section class="slide" data-slide="6">
   <div class="slide-content">
     <h2>One-Time Setup</h2>
     <p>Open the <strong>Colab Notebook</strong> or your local Python environment. Run these two blocks:</p>
@@ -482,13 +510,13 @@ print(<span class="st">f"Running on: {device.upper()}"</span>)</code></pre>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">5 / 19</div>
+    <div class="slide-indicator">6 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 5 — WHAT IS TOKENIZATION ===== -->
-<section class="slide" data-slide="6">
+<!-- ===== SLIDE 7 — WHAT IS TOKENIZATION ===== -->
+<section class="slide" data-slide="7">
   <div class="slide-content">
     <h2>How Do We Turn Text Into Numbers?</h2>
     <p>Computers don't understand words. They understand numbers. <strong>Tokenization</strong> is the bridge.</p>
@@ -523,13 +551,13 @@ print(<span class="st">f"Running on: {device.upper()}"</span>)</code></pre>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">6 / 19</div>
+    <div class="slide-indicator">7 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 6 — BPE ALGORITHM ===== -->
-<section class="slide" data-slide="7">
+<!-- ===== SLIDE 8 — BPE ALGORITHM ===== -->
+<section class="slide" data-slide="8">
   <div class="slide-content">
     <h2>How BPE Works (Simple Version)</h2>
     <p>Imagine you're a toddler learning to read. You start with letters, then notice some pairs appear together a lot.</p>
@@ -564,13 +592,13 @@ print(<span class="st">f"Running on: {device.upper()}"</span>)</code></pre>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">7 / 19</div>
+    <div class="slide-indicator">8 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 7 — VISUAL PIPELINE ===== -->
-<section class="slide" data-slide="8">
+<!-- ===== SLIDE 9 — VISUAL PIPELINE ===== -->
+<section class="slide" data-slide="9">
   <div class="slide-content">
     <h2>BPE in Action — Example</h2>
     <p>Tracing the algorithm on a tiny agriculture corpus.</p>
@@ -598,13 +626,13 @@ Then: ("c","a") → "ca"
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">8 / 19</div>
+    <div class="slide-indicator">9 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 8 — FROM SCRATCH CODE ===== -->
-<section class="slide" data-slide="9">
+<!-- ===== SLIDE 10 — FROM SCRATCH CODE ===== -->
+<section class="slide" data-slide="10">
   <div class="slide-content">
     <h2>BPE in 4 Functions</h2>
     <p>We only need 4 small functions to build BPE from scratch. Let's read them together.</p>
@@ -654,13 +682,13 @@ Then: ("c","a") → "ca"
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">9 / 19</div>
+    <div class="slide-indicator">10 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 9 — TRAINING BPE ===== -->
-<section class="slide" data-slide="10">
+<!-- ===== SLIDE 11 — TRAINING BPE ===== -->
+<section class="slide" data-slide="11">
   <div class="slide-content">
     <h2>Let's Train It!</h2>
     <p>We'll feed BPE sentences about African farming and watch it learn.</p>
@@ -684,13 +712,13 @@ print(tokens)  <span class="cm"># → ['Farm', 'ers', 'grow', 'cass', 'ava', 'in
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">10 / 19</div>
+    <div class="slide-indicator">11 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 10 — PRODUCTION TOKENIZER ===== -->
-<section class="slide" data-slide="11">
+<!-- ===== SLIDE 12 — PRODUCTION TOKENIZER ===== -->
+<section class="slide" data-slide="12">
   <div class="slide-content">
     <h2>Switch to a Production Tokenizer</h2>
     <p>Our custom BPE works, but it only has 50 tokens. Real LLMs use <strong>100,000+ tokens</strong>. Let's use <code>tiktoken</code> — the tokenizer behind GPT-4.</p>
@@ -714,13 +742,13 @@ print(enc.decode([data[0].item()]))  <span class="cm"># → "Jide"</span></code>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">11 / 19</div>
+    <div class="slide-indicator">12 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 11 — EMBEDDINGS OVERVIEW ===== -->
-<section class="slide" data-slide="12">
+<!-- ===== SLIDE 13 — EMBEDDINGS OVERVIEW ===== -->
+<section class="slide" data-slide="13">
   <div class="slide-content">
     <h2>Embeddings: Words as Vectors</h2>
     <p>A number alone (token ID) has no meaning — "397" and "401" don't tell us the words are related. Embeddings fix this by mapping each token to a <strong>vector of numbers</strong> where similar words live close together.</p>
@@ -746,17 +774,17 @@ Embedding for <strong>"queen"</strong> → [0.25, -1.40, 0.62, ..., 0.15]  (very
 Embedding for <strong>"apple"</strong> → [-0.98, 2.10, -0.33, ..., 0.88]  (very different)</pre>
     </div>
 
-    <p style="font-size:13px;">We'll explore embeddings in depth on <strong>Saturday</strong> — including how to visualize them with t-SNE and measure similarity with cosine distance!</p>
+    <p style="font-size:13px;">Last session you explored embeddings in depth &mdash; t-SNE maps and cosine similarity. <strong>Today we put them to work:</strong> those same vectors become the model's memory, learned live as it trains.</p>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">12 / 19</div>
+    <div class="slide-indicator">13 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 12 — SLIDING WINDOW ===== -->
-<section class="slide" data-slide="13">
+<!-- ===== SLIDE 14 — SLIDING WINDOW ===== -->
+<section class="slide" data-slide="14">
   <div class="slide-content">
     <h2>Creating Training Data: The Sliding Window</h2>
     <p>A language model's only job: <strong>predict the next token</strong>. We create flashcards: "Given these tokens, what comes next?"</p>
@@ -784,13 +812,13 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">13 / 19</div>
+    <div class="slide-indicator">14 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 12 — TINY TRANSFORMER ===== -->
-<section class="slide" data-slide="14">
+<!-- ===== SLIDE 15 — TINY TRANSFORMER ===== -->
+<section class="slide" data-slide="15">
   <div class="slide-content">
     <h2>The Tiny Brain: Our SLM Architecture</h2>
     <p>A miniature version of what powers ChatGPT. Three parts:</p>
@@ -833,17 +861,18 @@ Target:   " was hungry so she went looking for"</div>
         loss = F.cross_entropy(logits.view(B*T, C), targets.view(B*T))
         <span class="kw">return</span> logits, loss</code></pre>
 
+    <p style="font-size:14px;">The two <strong>embedding tables</strong> are the heart of the model &mdash; they store the meaning of every word, exactly the vectors you explored last session. Training is just the model <em>learning better embeddings</em> so it can predict what comes next.</p>
     <p style="font-size:14px;">Total: <strong>~6.5 million parameters</strong>. Tiny by today's standards (GPT-4 has trillions), but enough to learn patterns!</p>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">14 / 19</div>
+    <div class="slide-indicator">15 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 14 — TRAINING LOOP ===== -->
-<section class="slide" data-slide="15">
+<!-- ===== SLIDE 16 — TRAINING LOOP ===== -->
+<section class="slide" data-slide="16">
   <div class="slide-content">
     <h2>Training: Becoming Less Wrong</h2>
     <p>A fresh model guesses randomly. Training fixes that — one tiny adjustment at a time.</p>
@@ -878,13 +907,13 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">15 / 19</div>
+    <div class="slide-indicator">16 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 14 — GENERATION ===== -->
-<section class="slide" data-slide="16">
+<!-- ===== SLIDE 17 — GENERATION ===== -->
+<section class="slide" data-slide="17">
   <div class="slide-content">
     <h2>Let It Speak!</h2>
     <p>After training, our tiny model can generate text. We give it a starting word and ask: "What comes next?"</p>
@@ -903,13 +932,13 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">16 / 19</div>
+    <div class="slide-indicator">17 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 15 — MAKING IT BETTER ===== -->
-<section class="slide" data-slide="17">
+<!-- ===== SLIDE 18 — MAKING IT BETTER ===== -->
+<section class="slide" data-slide="18">
   <div class="slide-content">
     <h2>Making Our Model Smarter</h2>
     <p>Our first model was tiny (32-dim embeddings, 8-token context, 600 steps). Let's level up.</p>
@@ -939,13 +968,13 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">17 / 19</div>
+    <div class="slide-indicator">18 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 16 — KEY TAKEAWAYS ===== -->
-<section class="slide" data-slide="18">
+<!-- ===== SLIDE 19 — KEY TAKEAWAYS ===== -->
+<section class="slide" data-slide="19">
   <div class="slide-content">
     <h2>What You Learned Today</h2>
 
@@ -964,26 +993,26 @@ Target:   " was hungry so she went looking for"</div>
       </div>
       <div class="card" style="background:#f5f3ff;border-color:#ddd6fe;">
         <h4 style="color:#6d28d9;">4. Even tiny models can learn patterns</h4>
-        <p>With only 3.2M parameters and a 4-sentence story, our model learned to generate coherent text. That's the magic of neural networks.</p>
+        <p>With only ~6.5M parameters and a 4-sentence story, our model learned to generate coherent text. That's the magic of neural networks.</p>
       </div>
     </div>
 
-    <div style="background:#ecfdf5;border-left:3px solid #059669;border-radius:6px;padding:8px 14px;margin-top:8px;">
-      <p style="margin:0;font-size:14px;color:#1e293b;"><strong>&#127881; You did it!</strong> You just built a language model from scratch &mdash; tokens, embeddings, and all. Open the Colab notebook and experiment with your own text!</p>
+        <div style="background:#eff6ff;border-left:3px solid #1a56db;border-radius:6px;padding:8px 14px;margin-top:8px;">
+      <p style="margin:0;font-size:14px;color:#1e293b;"><strong>&#128161; The big idea:</strong> Every word's meaning lives in its <strong>embedding</strong> &mdash; the same vectors you explored last session. When we train this little model, we are really just <em>learning better embeddings</em> so it can predict the next word. That's the whole magic of language models!</p>
     </div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">18 / 19</div>
+    <div class="slide-indicator">19 / 20</div>
     <button class="nav-btn primary" onclick="nextSlide()">Next &rarr;</button>
   </nav>
 </section>
 
-<!-- ===== SLIDE 17 — THANK YOU / Q&A ===== -->
-<section class="slide" data-slide="19">
+<!-- ===== SLIDE 20 — THANK YOU / Q&A ===== -->
+<section class="slide" data-slide="20">
   <div class="slide-content" style="display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;">
     <h2 style="font-size:36px;margin-bottom:8px;">Thank You!</h2>
-    <p style="font-size:18px;color:#475569;margin-bottom:20px;">Our final session together &mdash; let's wrap up what you built!</p>
+    <p style="font-size:18px;color:#475569;margin-bottom:20px;">Questions? Let's discuss.</p>
 
     <div class="card-grid" style="max-width:540px;">
       <div class="card">
@@ -996,12 +1025,16 @@ Target:   " was hungry so she went looking for"</div>
         <p><a href="https://github.com/AlexKalll/tri-AI-Teaching" target="_blank" style="color:#1a56db;">github.com/AlexKalll/tri-AI-Teaching</a></p>
         <p style="font-size:12px;">Slides, code &amp; resources.</p>
       </div>
+      <div class="card">
+        <h4>&#127919; Keep Building</h4>
+        <p>This is our last session together &mdash; but your journey isn't! <strong>Tweak the Colab notebook</strong>, change the numbers, and watch what happens. Everything you learned lives in the repo.</p>
+      </div>
       <div class="card" style="text-align:center;">
         <h4>&#128640; Connect with Me</h4>
-        <p style="margin-bottom:4px;font-size:14px;color:#1a56db;font-weight:600;">Kaletsidik Ayalew &mdash; Software Engineer</p>
-        <p style="font-size:12px;color:#475569;margin-bottom:6px;">I focus on AI, ML &amp; Data Science tasks and love contributing to open-source projects and research.</p>
-        <p style="margin-bottom:3px;"><a href="https://github.com/AlexKalll" target="_blank" style="color:#1a56db;font-weight:600;">GitHub: github.com/AlexKalll</a></p>
-        <p><a href="https://www.linkedin.com/in/kaletsidik-ayalew/" target="_blank" style="color:#1a56db;font-weight:600;">LinkedIn: kaletsidik-ayalew</a></p>
+        <p style="margin-bottom:4px;"><a href="https://github.com/AlexKalll" target="_blank" style="color:#1a56db;font-weight:600;">github.com/AlexKalll</a></p>
+        <div style="display:inline-block;background:#fff;border:1px solid #e2e8f0;border-radius:6px;padding:4px 8px;margin-top:2px;">
+          <span style="font-size:11px;color:#64748b;">&#128247; Scan QR</span>
+        </div>
       </div>
       <div class="card">
         <h4>&#127918; Live Playgrounds</h4>
@@ -1016,7 +1049,7 @@ Target:   " was hungry so she went looking for"</div>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
-    <div class="slide-indicator">19 / 19</div>
+    <div class="slide-indicator">20 / 20</div>
     <button class="nav-btn primary" onclick="goToSlide(1)">&#9650; Start Over</button>
   </nav>
 </section>

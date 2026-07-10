@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TRI AI Saturdays — Lab: Train a SLM with BPE Tokenizer</title>
+<title>TRI AI Saturdays — Lab: Train a Small Language Model</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -30,9 +30,10 @@ body {
   visibility: hidden;
   transition: opacity 0.4s ease, visibility 0.4s ease;
   background-image: url('resources/full page with header and footer.png');
-  background-size: 100% 100%;
-  background-position: center;
+  background-size: 100% calc(100% - 66px);
+  background-position: top center;
   background-repeat: no-repeat;
+  background-color: #ffffff;
 }
 
 .slide.active {
@@ -348,7 +349,7 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
 <!-- ===== SLIDE 1 — TITLE ===== -->
 <section class="slide title-slide active" data-slide="1">
   <div class="slide-content">
-    <div class="title-main">Train a SLM with<br>a BPE Tokenizer</div>
+    <div class="title-main">Train a Small Language Model</div>
     <div class="title-sub">TRI AI Saturdays — Cohort 10 &middot; Lab Session</div>
     <div style="font-size:15px;color:#475569;margin-bottom:10px;">Saturday, July 11, 2026 &middot; 7–9 PM WAT</div>
     <div class="title-badges">

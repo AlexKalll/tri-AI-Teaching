@@ -380,9 +380,21 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
         <h4>&#10067; Question 2</h4>
         <p>We measured how alike two words are using <strong>cosine similarity</strong>. What does a value <em>close to 0</em> tell us about the two words?</p>
       </div>
+      <div class="card">
+        <h4>&#10067; Question 3 <span style="font-weight:400;font-size:12px;color:#64748b;">(multiple choice)</span></h4>
+        <p>Word embeddings place similar words close together in vector space. Which pair would you expect to have the <strong>highest cosine similarity</strong>?</p>
+        <p style="margin:2px 0;">A) &ldquo;king&rdquo; and &ldquo;queen&rdquo;</p>
+        <p style="margin:2px 0;">B) &ldquo;king&rdquo; and &ldquo;pizza&rdquo;</p>
+        <p style="margin:2px 0;">C) &ldquo;king&rdquo; and &ldquo;airplane&rdquo;</p>
+        <p style="margin:2px 0;">D) &ldquo;king&rdquo; and &ldquo;banana&rdquo;</p>
+        <button class="nav-btn" style="margin-top:8px;font-size:12px;padding:4px 10px;" onclick="var a=this.nextElementSibling;a.style.display=a.style.display==='none'?'block':'none';">Show Answer</button>
+        <p style="display:none;margin-top:6px;color:#15803d;font-weight:600;">Answer: A &mdash; &ldquo;king&rdquo; and &ldquo;queen&rdquo; are semantically close, so their embedding vectors point in nearly the same direction.</p>
+      </div>
     </div>
 
     <p style="font-size:13px;color:#64748b;">(No right or wrong &mdash; these just warm up our intuition. A full recap is on the next slide.)</p>
+
+    <p style="font-size:13px;margin-top:10px;"><strong>Want to refer back?</strong> Last session's deck (on GitHub Pages): <a href="embeddings.html" target="_blank" rel="noopener" style="color:#1a56db;font-weight:600;">&rarr; Embeddings deep-dive</a></p>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
@@ -998,21 +1010,21 @@ Target:   " was hungry so she went looking for"</div>
         <p><a href="https://github.com/AlexKalll/tri-AI-Teaching" target="_blank" style="color:#1a56db;">github.com/AlexKalll/tri-AI-Teaching</a></p>
         <p style="font-size:12px;">Slides, code &amp; resources.</p>
       </div>
-      <div class="card" style="text-align:center;">
-        <h4> Connect with Me</h4>
-        <p style="margin-bottom:6px;font-size:14px;color:#ea580c;font-weight:600;">Software Engineer</p>
-        <p style="margin-bottom:2px;"><a href="https://github.com/AlexKalll" target="_blank" rel="noopener" style="color:#1a56db;font-weight:600;">GitHub: github.com/AlexKalll</a></p>
-        <p><a href="https://www.linkedin.com/in/kaletsidik-ayalew/" target="_blank" rel="noopener" style="color:#1a56db;font-weight:600;">LinkedIn: kaletsidik-ayalew</a></p>
-      </div>
       <div class="card">
         <h4>&#127918; Live Playgrounds</h4>
         <p><a href="https://huggingface.co/spaces/Xenova/the-tokenizer-playground" target="_blank" style="color:#1a56db;">Tokenizer Playground &rarr;</a></p>
         <p><a href="https://word-embeddings.wbkolleg.unibe.ch/" target="_blank" style="color:#1a56db;">Word Embedding Playground &rarr;</a></p>
       </div>
       <div class="card">
-        <h4>&#128218; Session Resources</h4>
+        <h4>All Session Resources</h4>
         <p><a href="resources.html" style="color:#1a56db;font-weight:600;">Open the Resources page &rarr;</a></p>
         <p style="font-size:12px;color:#64748b;margin-top:2px;">Notebooks, repo, playgrounds &amp; more.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <h4> Connect with Me</h4>
+        <p style="margin-bottom:6px;font-size:14px;color:#ea580c;font-weight:600;">Software Engineer</p>
+        <p style="margin-bottom:2px;"><a href="https://github.com/AlexKalll" target="_blank" rel="noopener" style="color:#1a56db;font-weight:600;">GitHub: github.com/AlexKalll</a></p>
+        <p><a href="https://www.linkedin.com/in/kaletsidik-ayalew/" target="_blank" rel="noopener" style="color:#1a56db;font-weight:600;">LinkedIn: kaletsidik-ayalew</a></p>
       </div>
     </div>
 

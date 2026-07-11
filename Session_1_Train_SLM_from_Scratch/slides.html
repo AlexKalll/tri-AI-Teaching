@@ -581,28 +581,53 @@ print(<span class="st">f"Running on: {device.upper()}"</span>)</code></pre>
 <section class="slide" data-slide="8">
   <div class="slide-content">
     <h2>BPE in Action — Example</h2>
-    <p>Tracing the algorithm on a tiny agriculture corpus.</p>
+    <p>Tracing BPE on a tiny corpus: <span class="hl">"sunny rainy sunny"</span>. Watch letters merge into subwords, step by step. <span style="font-size:12px;color:#64748b;">(&lt;/w&gt; marks the end of a word.)</span></p>
 
-    <div class="diagram"><span class="hl">Corpus:</span> "cassava maize cassava"
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;background:#fff;border:1px solid #e2e8f0;border-radius:8px;">
+      <thead>
+        <tr style="background:#1a56db;color:#fff;">
+          <th style="text-align:left;padding:8px 12px;">Iteration</th>
+          <th style="text-align:left;padding:8px 12px;">Merge</th>
+          <th style="text-align:left;padding:8px 12px;">Resulting Tokens</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-top:1px solid #e2e8f0;">
+          <td style="padding:7px 12px;font-weight:600;color:#475569;">Start</td>
+          <td style="padding:7px 12px;color:#64748b;">&mdash;</td>
+          <td style="padding:7px 12px;font-family:'Courier New',monospace;font-size:13px;white-space:nowrap;">s u n n y &lt;/w&gt;&nbsp;&nbsp; r a i n y &lt;/w&gt;&nbsp;&nbsp; s u n n y &lt;/w&gt;</td>
+        </tr>
+        <tr style="border-top:1px solid #e2e8f0;background:#f8fafc;">
+          <td style="padding:7px 12px;font-weight:600;color:#475569;">1</td>
+          <td style="padding:7px 12px;">n + y &rarr; ny</td>
+          <td style="padding:7px 12px;font-family:'Courier New',monospace;font-size:13px;white-space:nowrap;">s u n ny &lt;/w&gt;&nbsp;&nbsp; r a i ny &lt;/w&gt;&nbsp;&nbsp; s u n ny &lt;/w&gt;</td>
+        </tr>
+        <tr style="border-top:1px solid #e2e8f0;">
+          <td style="padding:7px 12px;font-weight:600;color:#475569;">2</td>
+          <td style="padding:7px 12px;">s + u &rarr; su</td>
+          <td style="padding:7px 12px;font-family:'Courier New',monospace;font-size:13px;white-space:nowrap;">su n ny &lt;/w&gt;&nbsp;&nbsp; r a i ny &lt;/w&gt;&nbsp;&nbsp; su n ny &lt;/w&gt;</td>
+        </tr>
+        <tr style="border-top:1px solid #e2e8f0;background:#f8fafc;">
+          <td style="padding:7px 12px;font-weight:600;color:#475569;">3</td>
+          <td style="padding:7px 12px;">su + n &rarr; sun</td>
+          <td style="padding:7px 12px;font-family:'Courier New',monospace;font-size:13px;white-space:nowrap;">sun ny &lt;/w&gt;&nbsp;&nbsp; r a i ny &lt;/w&gt;&nbsp;&nbsp; sun ny &lt;/w&gt;</td>
+        </tr>
+        <tr style="border-top:1px solid #e2e8f0;">
+          <td style="padding:7px 12px;font-weight:600;color:#475569;">4</td>
+          <td style="padding:7px 12px;">sun + ny &rarr; sunny</td>
+          <td style="padding:7px 12px;font-family:'Courier New',monospace;font-size:13px;white-space:nowrap;">sunny &lt;/w&gt;&nbsp;&nbsp; r a i ny &lt;/w&gt;&nbsp;&nbsp; sunny &lt;/w&gt;</td>
+        </tr>
+        <tr style="border-top:1px solid #e2e8f0;background:#f8fafc;">
+          <td style="padding:7px 12px;font-weight:600;color:#475569;">5</td>
+          <td style="padding:7px 12px;">sunny + &lt;/w&gt; &rarr; sunny&lt;/w&gt;</td>
+          <td style="padding:7px 12px;font-family:'Courier New',monospace;font-size:13px;white-space:nowrap;">sunny&lt;/w&gt;&nbsp;&nbsp; r a i ny &lt;/w&gt;&nbsp;&nbsp; sunny&lt;/w&gt;</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
 
-<span class="cm"># Step 1 — Break into characters + &lt;/w&gt;</span>
-c a s s a v a &lt;/w&gt;   m a i z e &lt;/w&gt;   c a s s a v a &lt;/w&gt;
-
-<span class="cm"># Step 2 — Find most frequent adjacent pair</span>
-("a","&lt;/w&gt;") appears 3 times ← <span class="hl">winner!</span>
-("c","a") appears 2 times
-("a","s") appears 2 times
-
-<span class="cm"># Step 3 — Merge "a&lt;/w&gt;" everywhere</span>
-c a s s a v a&lt;/w&gt;   m a i z e&lt;/w&gt;   c a s s a v a&lt;/w&gt;
-
-<span class="cm"># Step 4 — Repeat</span>
-Next: ("a","v") → "av"
-Then: ("av","a") → "ava"
-Then: ("c","a") → "ca"
-... after 50 merges we get subwords like <span class="hl">"cass"</span>, <span class="hl">"ava"</span>, <span class="hl">"maiz"</span></div>
-
-    <p style="font-size:14px;">Each merge creates a new subword. The <strong>order of merges</strong> reveals the statistical patterns in your text.</p>
+    <p style="font-size:14px;margin-top:8px;">Each step merges the most frequent neighbour pair. In just 5 merges, <strong>"sunny"</strong> becomes a single token &mdash; so the model treats it as one meaningful unit instead of six separate letters.</p>
   </div>
   <nav class="nav-bar">
     <button class="nav-btn" onclick="prevSlide()">&larr; Back</button>
@@ -615,7 +640,7 @@ Then: ("c","a") → "ca"
 <section class="slide" data-slide="9">
   <div class="slide-content">
     <h2>BPE in 4 Functions</h2>
-    <p>We only need 4 small functions to build BPE from scratch. Let's read them together.</p>
+    <p>We only need 4 small functions to build BPE from scratch. </p>
 
     <div class="card-grid">
       <div class="card">

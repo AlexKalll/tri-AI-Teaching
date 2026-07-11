@@ -462,13 +462,11 @@ tbody tr:nth-child(even) { background: rgba(255,255,255,0.5); }
     <h2>One-Time Setup</h2>
     <p>Open the <strong>Colab Notebook</strong> or your local Python environment. Run these two blocks:</p>
 
-    <pre><code><span class="cm"># Install the tokenizer library</span>
-!pip install tiktoken -q
-
+    <pre><code>
 <span class="cm"># Import everything we need</span>
 <span class="kw">import</span> re, math
 <span class="kw">from</span> collections <span class="kw">import</span> defaultdict, Counter
-<span class="kw">import</span> numpy <span class="kw">as</span> np, pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
 <span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
 <span class="kw">import</span> torch, torch.nn <span class="kw">as</span> nn
 <span class="kw">from</span> torch.nn <span class="kw">import</span> functional <span class="kw">as</span> F

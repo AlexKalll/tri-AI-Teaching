@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>lecture_pdf.md</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+
+<style>
+/* https://github.com/microsoft/vscode/blob/master/extensions/markdown-language-features/media/markdown.css */
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+
+body {
+	font-family: var(--vscode-markdown-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif);
+	font-size: var(--vscode-markdown-font-size, 14px);
+	padding: 0 26px;
+	line-height: var(--vscode-markdown-line-height, 22px);
+	word-wrap: break-word;
+}
+
+#code-csp-warning {
+	position: fixed;
+	top: 0;
+	right: 0;
+	color: white;
+	margin: 16px;
+	text-align: center;
+	font-size: 12px;
+	font-family: sans-serif;
+	background-color:#444444;
+	cursor: pointer;
+	padding: 6px;
+	box-shadow: 1px 1px 1px rgba(0,0,0,.25);
+}
+
+#code-csp-warning:hover {
+	text-decoration: none;
+	background-color:#007acc;
+	box-shadow: 2px 2px 2px rgba(0,0,0,.25);
+}
+
+body.scrollBeyondLastLine {
+	margin-bottom: calc(100vh - 22px);
+}
+
+body.showEditorSelection .code-line {
+	position: relative;
+}
+
+body.showEditorSelection .code-active-line:before,
+body.showEditorSelection .code-line:hover:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	left: -12px;
+	height: 100%;
+}
+
+body.showEditorSelection li.code-active-line:before,
+body.showEditorSelection li.code-line:hover:before {
+	left: -30px;
+}
+
+.vscode-light.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(0, 0, 0, 0.40);
+}
+
+.vscode-light.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-dark.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 255, 255, 0.60);
+}
+
+.vscode-dark.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+.vscode-high-contrast.showEditorSelection .code-active-line:before {
+	border-left: 3px solid rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line:hover:before {
+	border-left: 3px solid rgba(255, 160, 0, 1);
+}
+
+.vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
+	border-left: none;
+}
+
+img {
+	max-width: 100%;
+	max-height: 100%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a:focus,
+input:focus,
+select:focus,
+textarea:focus {
+	outline: 1px solid -webkit-focus-ring-color;
+	outline-offset: -1px;
+}
+
+hr {
+	border: 0;
+	height: 2px;
+	border-bottom: 2px solid;
+}
+
+h1 {
+	padding-bottom: 0.3em;
+	line-height: 1.2;
+	border-bottom-width: 1px;
+	border-bottom-style: solid;
+}
+
+h1, h2, h3 {
+	font-weight: normal;
+}
+
+table {
+	border-collapse: collapse;
+}
+
+table > thead > tr > th {
+	text-align: left;
+	border-bottom: 1px solid;
+}
+
+table > thead > tr > th,
+table > thead > tr > td,
+table > tbody > tr > th,
+table > tbody > tr > td {
+	padding: 5px 10px;
+}
+
+table > tbody > tr + tr > td {
+	border-top: 1px solid;
+}
+
+blockquote {
+	margin: 0 7px 0 5px;
+	padding: 0 16px 0 10px;
+	border-left-width: 5px;
+	border-left-style: solid;
+}
+
+code {
+	font-family: Menlo, Monaco, Consolas, "Droid Sans Mono", "Courier New", monospace, "Droid Sans Fallback";
+	font-size: 1em;
+	line-height: 1.357em;
+}
+
+body.wordWrap pre {
+	white-space: pre-wrap;
+}
+
+pre:not(.hljs),
+pre.hljs code > div {
+	padding: 16px;
+	border-radius: 3px;
+	overflow: auto;
+}
+
+pre code {
+	color: var(--vscode-editor-foreground);
+	tab-size: 4;
+}
+
+/** Theming */
+
+.vscode-light pre {
+	background-color: rgba(220, 220, 220, 0.4);
+}
+
+.vscode-dark pre {
+	background-color: rgba(10, 10, 10, 0.4);
+}
+
+.vscode-high-contrast pre {
+	background-color: rgb(0, 0, 0);
+}
+
+.vscode-high-contrast h1 {
+	border-color: rgb(0, 0, 0);
+}
+
+.vscode-light table > thead > tr > th {
+	border-color: rgba(0, 0, 0, 0.69);
+}
+
+.vscode-dark table > thead > tr > th {
+	border-color: rgba(255, 255, 255, 0.69);
+}
+
+.vscode-light h1,
+.vscode-light hr,
+.vscode-light table > tbody > tr + tr > td {
+	border-color: rgba(0, 0, 0, 0.18);
+}
+
+.vscode-dark h1,
+.vscode-dark hr,
+.vscode-dark table > tbody > tr + tr > td {
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+</style>
+
+<style>
+/* Tomorrow Theme */
+/* http://jmblog.github.com/color-themes-for-google-code-highlightjs */
+/* Original theme - https://github.com/chriskempson/tomorrow-theme */
+
+/* Tomorrow Comment */
+.hljs-comment,
+.hljs-quote {
+	color: #8e908c;
+}
+
+/* Tomorrow Red */
+.hljs-variable,
+.hljs-template-variable,
+.hljs-tag,
+.hljs-name,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-regexp,
+.hljs-deletion {
+	color: #c82829;
+}
+
+/* Tomorrow Orange */
+.hljs-number,
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-literal,
+.hljs-type,
+.hljs-params,
+.hljs-meta,
+.hljs-link {
+	color: #f5871f;
+}
+
+/* Tomorrow Yellow */
+.hljs-attribute {
+	color: #eab700;
+}
+
+/* Tomorrow Green */
+.hljs-string,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+	color: #718c00;
+}
+
+/* Tomorrow Blue */
+.hljs-title,
+.hljs-section {
+	color: #4271ae;
+}
+
+/* Tomorrow Purple */
+.hljs-keyword,
+.hljs-selector-tag {
+	color: #8959a8;
+}
+
+.hljs {
+	display: block;
+	overflow-x: auto;
+	color: #4d4d4c;
+	padding: 0.5em;
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+
+.hljs-strong {
+	font-weight: bold;
+}
+</style>
+
+<style>
+/*
+ * Markdown PDF CSS
+ */
+
+ body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", "Ubuntu", "Droid Sans", sans-serif, "Meiryo";
+	padding: 0 12px;
+}
+
+pre {
+	background-color: #f8f8f8;
+	border: 1px solid #cccccc;
+	border-radius: 3px;
+	overflow-x: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+}
+
+pre:not(.hljs) {
+	padding: 23px;
+	line-height: 19px;
+}
+
+blockquote {
+	background: rgba(127, 127, 127, 0.1);
+	border-color: rgba(0, 122, 204, 0.5);
+}
+
+.emoji {
+	height: 1.4em;
+}
+
+code {
+	font-size: 14px;
+	line-height: 19px;
+}
+
+/* for inline code */
+:not(pre):not(.hljs) > code {
+	color: #C9AE75; /* Change the old color so it seems less like an error */
+	font-size: inherit;
+}
+
+/* Page Break : use <div class="page"/> or <div class="page"></div> to insert page break
+-------------------------------------------------------- */
+.page {
+	page-break-after: always;
+}
+
+</style>
+
+<script src="https://unpkg.com/mermaid/dist/mermaid.min.js"></script>
+</head>
+<body>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+          ? 'dark'
+          : 'default'
+    });
+  </script>
+<h1 id="embeddings--lecture-session">Embeddings — Lecture Session</h1>
+<p><strong>The conceptual deep-dive: how language models represent meaning as numbers</strong>
+<em>The foundation that powers every language model — including the tiny SLM you will build.</em></p>
+<p><strong>Course repository:</strong> <a href="https://github.com/AlexKalll/tri-AI-Teaching">tri-AI-Teaching</a>
+<strong>Lecture deck:</strong> <a href="https://alexkalll.github.io/tri-AI-Teaching/embeddings.html">embeddings.html</a>
+<strong>Hands-on notebook (Colab):</strong> <a href="https://colab.research.google.com/drive/139sbOlJguvJ21GfQqCEk_EwvrymtTNd1?usp=sharing">Embeddings Lab</a></p>
+<hr>
+<h2 id="0-why-this-session-matters">0. Why This Session Matters</h2>
+<p>Every modern language model — from a tiny classroom SLM to GPT-4 — shares one core idea: <strong>it represents words as lists of numbers called embeddings.</strong> Before we can build or train anything, we need to understand what embeddings are, how similarity is measured, and how to <em>see</em> them. This lecture covers exactly that, conceptually and with live examples.</p>
+<blockquote>
+<p><strong>Roadmap:</strong> Next, in the lab/SLM session, we take these same vectors and <em>learn</em> them from data so a model can predict the next word.</p>
+</blockquote>
+<hr>
+<h2 id="1-what-is-an-embedding">1. What Is an Embedding?</h2>
+<p>A computer only understands numbers. So a language model turns every word (token) into a long list of numbers called a <strong>vector</strong>. We call that vector the word's <strong>embedding</strong>.</p>
+<ul>
+<li><strong>A Vector = Coordinates</strong> — Think of an embedding as a point in a giant &quot;meaning space.&quot; Each number is one coordinate of that point.</li>
+<li><strong>Many Numbers</strong> — Big models like <strong>Gemma</strong> use <strong>1,152 numbers</strong> per word. Our tiny SLM used just 32. More numbers = more room for meaning.</li>
+<li><strong>Similar = Nearby</strong> — Words with similar meaning get <em>similar</em> vectors — they sit close together in that space.</li>
+</ul>
+<pre class="hljs"><code><div>Embedding for &quot;king&quot;  → [0.23, -1.45, 0.67, ..., 0.12]   (1,152 numbers)
+Embedding for &quot;queen&quot; → [0.25, -1.40, 0.62, ..., 0.15]   (almost the same!)
+Embedding for &quot;apple&quot; → [-0.98,  2.10, -0.33, ..., 0.88]  (very different)
+</div></code></pre>
+<blockquote>
+<p><strong>Quick check:</strong> What is a word embedding?
+<strong>A)</strong> A table that stores all the sentences a model has read
+<strong>B)</strong> A long list of numbers that represents a word's meaning ✅
+<strong>C)</strong> A programming language used to train models
+<strong>D)</strong> The raw text before it is cleaned</p>
+</blockquote>
+<hr>
+<h2 id="2-vectors--matrices-with-numpy">2. Vectors &amp; Matrices (with NumPy)</h2>
+<p>To work with embeddings we use the Python library <code>numpy</code>. It makes working with lists of numbers (vectors) and tables of numbers (matrices) easy.</p>
+<ul>
+<li><strong>Vector</strong> — An ordered list of numbers. Example: <code>v = [7, 3, 1, 4]</code> is a 4-number vector.</li>
+<li><strong>Matrix</strong> — A table of numbers with rows and columns. The embedding table has <em>one row per word</em>.</li>
+<li><strong>Shape</strong> — How big it is. A vector of 4 numbers has shape <code>(4,)</code>. A 2×3 matrix has shape <code>(2, 3)</code>.</li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-keyword">import</span> numpy <span class="hljs-keyword">as</span> np
+
+<span class="hljs-comment"># A vector and a 2x3 matrix</span>
+v = np.array([<span class="hljs-number">7</span>, <span class="hljs-number">3</span>, <span class="hljs-number">1</span>, <span class="hljs-number">4</span>])
+M = np.array([[<span class="hljs-number">6</span>, <span class="hljs-number">1</span>, <span class="hljs-number">4</span>],
+              [<span class="hljs-number">9</span>, <span class="hljs-number">0</span>, <span class="hljs-number">2</span>]])
+
+<span class="hljs-built_in">print</span>(v.shape)   <span class="hljs-comment"># (4,)  -&gt; 4 numbers</span>
+<span class="hljs-built_in">print</span>(M.shape)   <span class="hljs-comment"># (2, 3) -&gt; 2 rows, 3 columns</span>
+
+<span class="hljs-comment"># Grab one row (one word&#x27;s embedding) and one column</span>
+row_3  = embeddings[<span class="hljs-number">2</span>, :]   <span class="hljs-comment"># 3rd word&#x27;s vector</span>
+col_7  = embeddings[:, <span class="hljs-number">6</span>]   <span class="hljs-comment"># 7th number across all words</span>
+</div></code></pre>
+<p>The whole embedding table is just a big matrix: <strong>rows = words, columns = meaning-coordinates</strong>.</p>
+<blockquote>
+<p><strong>Quick check:</strong> In the embedding matrix, what does one <em>row</em> represent?
+<strong>A)</strong> One meaning-coordinate shared by all words
+<strong>B)</strong> The entire model
+<strong>C)</strong> The embedding (vector) of a single word ✅
+<strong>D)</strong> A single training sentence</p>
+</blockquote>
+<hr>
+<h2 id="3-meaning-lives-in-directions">3. Meaning Lives in Directions</h2>
+<p>The magic of embeddings: words that mean similar things point in <strong>similar directions</strong>. &quot;king&quot; and &quot;queen&quot; point almost the same way. &quot;apple&quot; points somewhere else entirely.</p>
+<pre class="hljs"><code><div>(A simplified 2D map)
+   king ●      queen ●    prince ●            apple ●    banana ●
+                                              phone ●    computer ●
+                                              bus ●
+</div></code></pre>
+<ul>
+<li>Words near each other (royals, fruits, tech) form natural clusters.</li>
+<li>This is a simplified 2D view — in reality the space has <strong>1,152 dimensions</strong>.</li>
+</ul>
+<p>This is why a model can <strong>guess meaning</strong> even for words it has rarely seen — their vectors land near related words it already knows.</p>
+<blockquote>
+<p><strong>Quick check:</strong> If &quot;cat&quot; and &quot;dog&quot; have very similar embeddings, what does that tell us?
+<strong>A)</strong> They are spelled the same way
+<strong>B)</strong> The model thinks they are related in meaning ✅
+<strong>C)</strong> They appear the same number of times in the data
+<strong>D)</strong> The embeddings are broken</p>
+</blockquote>
+<hr>
+<h2 id="4-the-dot-product-measuring-similarity">4. The Dot Product: Measuring Similarity</h2>
+<p>How do we measure if two vectors point the same way? With the <strong>dot product</strong> — we multiply their numbers pair-by-pair and add everything up.</p>
+<pre class="hljs"><code><div>dot_product = u · v = u₁v₁ + u₂v₂ + ... + uₙvₙ
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Dot product</th>
+<th>Angle</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Positive (&gt; 0)</td>
+<td>&lt; 90°</td>
+<td>Vectors point the <em>same way</em> → words are related</td>
+</tr>
+<tr>
+<td>Zero (≈ 0)</td>
+<td>= 90°</td>
+<td>Vectors are <em>unrelated</em> (orthogonal)</td>
+</tr>
+<tr>
+<td>Negative (&lt; 0)</td>
+<td>&gt; 90°</td>
+<td>Vectors point <em>opposite ways</em> → words are dissimilar</td>
+</tr>
+</tbody>
+</table>
+<pre class="hljs"><code><div>u · v &gt; 0  →  similar meaning   (king · queen)
+u · v = 0  →  no relation        (king · bus)
+u · v &lt; 0  →  opposite meaning  (hot · cold)
+</div></code></pre>
+<p>A dot product can grow very large in high dimensions, so we usually <strong>normalize</strong> it — that leads us to cosine similarity.</p>
+<blockquote>
+<p><strong>Quick check:</strong> A dot product of <strong>0</strong> between two word embeddings means the words are…
+<strong>A)</strong> Exactly the same word
+<strong>B)</strong> Opposites in meaning
+<strong>C)</strong> Unrelated (at a right angle in the space) ✅
+<strong>D)</strong> Both very common words</p>
+</blockquote>
+<hr>
+<h2 id="5-cosine-similarity">5. Cosine Similarity</h2>
+<p>Cosine similarity is the <strong>dot product divided by the lengths</strong> of both vectors. The result is always between <strong>-1 and +1</strong>, so it is easy to compare.</p>
+<pre class="hljs"><code><div>cosine(u, v) = (u · v) / ( ||u|| × ||v|| )
+</div></code></pre>
+<table>
+<thead>
+<tr>
+<th>Pair of words</th>
+<th>Cosine</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&quot;king&quot; &amp; &quot;king&quot;</td>
+<td>+1.00</td>
+<td>Identical</td>
+</tr>
+<tr>
+<td>&quot;king&quot; &amp; &quot;queen&quot;</td>
+<td>+0.42</td>
+<td>Closely related</td>
+</tr>
+<tr>
+<td>&quot;joy&quot; &amp; &quot;happy&quot;</td>
+<td>high +</td>
+<td>Similar feeling</td>
+</tr>
+<tr>
+<td>&quot;sad&quot; &amp; &quot;happy&quot;</td>
+<td>+0.22</td>
+<td>Both describe feelings</td>
+</tr>
+<tr>
+<td>&quot;king&quot; &amp; &quot;bus&quot;</td>
+<td>+0.04</td>
+<td>Unrelated</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>+1</strong> = same direction, <strong>0</strong> = unrelated, <strong>-1</strong> = opposite.</li>
+<li>Notice even antonyms like &quot;sad/happy&quot; score above 0 — they are still both <em>feelings</em>, so the model groups them loosely.</li>
+</ul>
+<blockquote>
+<p><strong>Quick check:</strong> &quot;king&quot; and &quot;bus&quot; have a cosine similarity of <strong>0.04</strong>. This means they are…
+<strong>A)</strong> Synonyms
+<strong>B)</strong> Unrelated ✅
+<strong>C)</strong> Opposites
+<strong>D)</strong> The same word</p>
+</blockquote>
+<hr>
+<h2 id="6-one-number-isnt-enough">6. One Number Isn't Enough</h2>
+<p>It is tempting to ask &quot;what does the 5th number <em>mean</em>?&quot; In practice, <strong>no single number carries a clear meaning.</strong> Meaning comes from the whole vector together.</p>
+<ul>
+<li><strong>Hard to Read</strong> — If you plot just two of the 1,152 numbers, words rarely form clean groups. Dimensions mix many ideas at once.</li>
+<li><strong>Combinations Matter</strong> — Meaning lives in the <em>pattern across all numbers</em>, like a recipe — one ingredient alone isn't the dish.</li>
+<li><strong>So We Reduce</strong> — We use tricks to <em>compress</em> all dimensions into 2 or 3 so we can actually see the structure.</li>
+</ul>
+<pre class="hljs"><code><div><span class="hljs-comment"># Pick any 2 dimensions and plot the words</span>
+emb.plot_embeddings_dimensions(embeddings, labels,
+                               dim_x=<span class="hljs-number">432</span>, dim_y=<span class="hljs-number">877</span>)
+</div></code></pre>
+<p>Try different pairs — you will rarely find a single pair that cleanly separates &quot;food&quot; from &quot;technology&quot;. That is normal!</p>
+<blockquote>
+<p><strong>Quick check:</strong> Why can't we understand an embedding by looking at just one of its numbers?
+<strong>A)</strong> The numbers are randomly generated every time
+<strong>B)</strong> Meaning comes from the combination of <em>all</em> the numbers together ✅
+<strong>C)</strong> Embeddings have no real meaning
+<strong>D)</strong> The computer is too slow to show one number</p>
+</blockquote>
+<hr>
+<h2 id="7-seeing-in-2d-t-sne">7. Seeing in 2D: t-SNE</h2>
+<p><strong>t-SNE</strong> is a technique that compresses 1,152 dimensions down to <strong>2</strong>, while trying to keep nearby words nearby and far words far. The result is a map we can actually look at.</p>
+<pre class="hljs"><code><div>emb.plot_embeddings_tsne(embeddings, labels)
+</div></code></pre>
+<ul>
+<li><strong>Clusters Appear</strong> — Related words form tight clouds: &quot;mobile&quot;, &quot;phone&quot;, &quot;computer&quot;, &quot;internet&quot; sit together.</li>
+<li><strong>Royals Together</strong> — &quot;man&quot;/&quot;woman&quot; and &quot;king&quot;/&quot;queen&quot; land close — the model learned the relationship.</li>
+<li><strong>Some Noise</strong> — Compression isn't perfect: &quot;cat&quot; and &quot;car&quot; may look near each other by accident.</li>
+</ul>
+<p>t-SNE is a <strong>viewing tool</strong>, not the model itself. It helps us <em>see</em> and debug what the embeddings learned.</p>
+<blockquote>
+<p><strong>Quick check:</strong> What is the main job of t-SNE in this lab?
+<strong>A)</strong> To make the embeddings bigger
+<strong>B)</strong> To project high-dimensional embeddings into 2D so we can see clusters ✅
+<strong>C)</strong> To delete rare words
+<strong>D)</strong> To speed up training</p>
+</blockquote>
+<hr>
+<h2 id="8-try-it-yourself-live">8. Try It Yourself (Live)</h2>
+<p>In the hands-on part we run the Google DeepMind notebook and watch embeddings come alive. You will:</p>
+<ol>
+<li>Load 24 real token embeddings from the <strong>Gemma</strong> model.</li>
+<li>Write a tiny function to pull out one word's vector.</li>
+<li>Compute <strong>cosine similarity</strong> between word pairs like &quot;king&quot;/&quot;queen&quot;.</li>
+<li>Plot single dimensions, then use <strong>t-SNE</strong> to see the clusters.</li>
+</ol>
+<blockquote>
+<p><strong>Notebook:</strong> <a href="https://colab.research.google.com/drive/139sbOlJguvJ21GfQqCEk_EwvrymtTNd1?usp=sharing">Open the Embeddings Lab notebook in Colab</a>
+<em>Original source: Google DeepMind · AI Foundations · course_2</em></p>
+</blockquote>
+<p>No answers are hidden — run the cells, change the words, and <strong>discuss what you see</strong>. That is where the learning happens!</p>
+<p><strong>Discussion prompt:</strong> Which pair do you <em>predict</em> will have the highest cosine similarity?</p>
+<ul>
+<li>A) &quot;king&quot; &amp; &quot;queen&quot;</li>
+<li>B) &quot;king&quot; &amp; &quot;bus&quot;</li>
+<li>C) &quot;apple&quot; &amp; &quot;computer&quot;</li>
+<li>D) &quot;water&quot; &amp; &quot;mountain&quot;</li>
+</ul>
+<hr>
+<h2 id="9-key-takeaways">9. Key Takeaways</h2>
+<ol>
+<li><strong>Words → Vectors</strong> — An embedding is a list of numbers that captures a word's meaning. Similar words → similar vectors.</li>
+<li><strong>Similarity</strong> — The <strong>dot product</strong> and <strong>cosine similarity</strong> measure how alike two words are (−1 to +1).</li>
+<li><strong>See the Space</strong> — Single numbers don't explain meaning; <strong>t-SNE</strong> lets us visualize the whole space as clusters.</li>
+</ol>
+<p>Today you <strong>experimented</strong> with real embeddings — the same idea that powers the &quot;meaning&quot; inside every language model, including the tiny SLM we build in the lab session.</p>
+<hr>
+<h2 id="10-resources">10. Resources</h2>
+<ul>
+<li>
+<p><strong>Lecture deck:</strong> <a href="https://alexkalll.github.io/tri-AI-Teaching/embeddings.html">embeddings.html</a></p>
+</li>
+<li>
+<p><strong>Hands-on notebook:</strong> <a href="https://colab.research.google.com/drive/139sbOlJguvJ21GfQqCEk_EwvrymtTNd1?usp=sharing">Embeddings Lab (Colab)</a></p>
+</li>
+<li>
+<p><strong>Resources page:</strong> <a href="https://alexkalll.github.io/tri-AI-Teaching/embeddings-resources.html">embeddings-resources.html</a></p>
+</li>
+<li>
+<p><strong>Course repo:</strong> <a href="https://github.com/AlexKalll/tri-AI-Teaching">github.com/AlexKalll/tri-AI-Teaching</a></p>
+</li>
+<li>
+<p><strong>Interactive playgrounds:</strong></p>
+<ul>
+<li><a href="https://huggingface.co/spaces/Xenova/the-tokenizer-playground">Tokenizer Playground</a></li>
+<li><a href="https://word-embeddings.wbkolleg.unibe.ch/">Word Embedding Playground</a></li>
+<li><a href="https://embed.sheth.io/">Embeddings Playground (sheth.io)</a></li>
+</ul>
+</li>
+<li></li>
+</ul>
+<p><strong>Instructor:</strong> Kaletsidik Ayalew
+<strong>GitHub:</strong> <a href="https://github.com/AlexKalll">AlexKalll</a> · <strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/kaletsidik-ayalew/">kaletsidik-ayalew</a></p>
+
+</body>
+</html>
